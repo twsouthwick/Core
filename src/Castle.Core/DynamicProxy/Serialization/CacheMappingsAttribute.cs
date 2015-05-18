@@ -13,7 +13,8 @@
 // limitations under the License.
 
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR  // CoreCLR Does not support binary serialization.
+
 
 namespace Castle.DynamicProxy.Serialization
 {

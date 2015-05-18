@@ -18,7 +18,7 @@ namespace Castle.DynamicProxy
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Reflection;
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 	using System.Runtime.InteropServices;
 	using System.Runtime.Remoting;
 	using System.Security;

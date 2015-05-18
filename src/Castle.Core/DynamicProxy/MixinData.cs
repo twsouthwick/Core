@@ -14,10 +14,13 @@
 
 namespace Castle.DynamicProxy
 {
-	using System;
-	using System.Collections.Generic;
+    using System;
+    using System.Collections.Generic;
+#if CORECLR
+    using System.Reflection;
+#endif
 
-	public class MixinData
+    public class MixinData
 	{
 		private readonly Dictionary<Type, int> mixinPositions = new Dictionary<Type, int>();
 		private readonly List<object> mixinsImpl = new List<object>();

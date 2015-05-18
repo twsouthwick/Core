@@ -17,9 +17,8 @@ namespace Castle.DynamicProxy.Internal
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
-	using System.Reflection;
-
-	using Castle.Core.Internal;
+    using System.Reflection;
+    using Castle.Core.Internal;
 	using Castle.DynamicProxy.Generators;
 
 	public static class InvocationHelper

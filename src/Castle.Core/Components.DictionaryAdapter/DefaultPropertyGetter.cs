@@ -16,10 +16,10 @@ namespace Castle.Components.DictionaryAdapter
 {
 	using System.ComponentModel;
 
-	/// <summary>
-	/// Manages conversion between property values.
-	/// </summary>
-	public class DefaultPropertyGetter : IDictionaryPropertyGetter
+    /// <summary>
+    /// Manages conversion between property values.
+    /// </summary>
+    public class DefaultPropertyGetter : IDictionaryPropertyGetter
 	{
 		private readonly TypeConverter converter;
 

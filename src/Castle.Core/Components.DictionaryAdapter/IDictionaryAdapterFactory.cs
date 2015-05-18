@@ -19,7 +19,8 @@ namespace Castle.Components.DictionaryAdapter
 	using System.Collections;
 #if !SILVERLIGHT
 	using System.Collections.Specialized;
-	using System.Xml.XPath;
+    using System.Xml;
+    using System.Xml.XPath;
 #endif
 
 	/// <summary>

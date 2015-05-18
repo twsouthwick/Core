@@ -68,9 +68,12 @@ namespace Castle.DynamicProxy.Internal
 				{
 					continue;
 				}
-
-				if (type.IsInterface)
-				{
+#if CORECLR
+                if (type.GetTypeInfo().IsInterface)
+#else
+                if (type.IsInterface)
+#endif
+                {
 					if (interfaces.Add(type) == false)
 					{
 						continue;
