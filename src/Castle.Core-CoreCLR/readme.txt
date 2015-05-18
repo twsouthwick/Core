@@ -1,0 +1,1 @@
+Note the project / directory name here is Castle.Core (despite this being potentially confusing) to deal with the .NET Core project system.

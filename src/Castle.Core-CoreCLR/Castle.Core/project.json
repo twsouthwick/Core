@@ -1,0 +1,54 @@
+﻿{
+  "version": "3.3.4-*",
+  "description": "Castle Project Core, including DynamicProxy, Logging Abstractions and DictionaryAdapter",
+  "authors": [ "Castle Project Contributors" ],
+  "tags": [ "castle", "dynamicproxy", "dynamic proxy", "dynamicproxy2", "dictionaryadapter", "emailsender" ],
+  "projectUrl": "http://www.castleproject.org/",
+  "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+
+  "code": [
+    "../../Castle.Core/Components.DictionaryAdapter/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Attributes/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Util/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Core/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Accessors/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Collections/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Cursors/Base/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Cursors/SystemXml/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Cursors/XPath/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Namespaces/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Serializers/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Types/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Utilities/*.cs",
+    "../../Castle.Core/Core/*.cs",
+    "../../Castle.Core/Core/Configuration/*.cs",
+    "../../Castle.Core/Core/Extensions/*.cs",
+    "../../Castle.Core/Core/Internal/*.cs",
+    "../../Castle.Core/Core/Logging/*.cs",
+    "../../Castle.Core/Core/Resource/*.cs",
+    "../../Castle.Core/Core/Smtp/*.cs",
+    "../../Castle.Core/DynamicProxy/*.cs",
+    "../../Castle.Core/DynamicProxy/Contributors/*.cs",
+    "../../Castle.Core/DynamicProxy/Generators/*.cs",
+    "../../Castle.Core/DynamicProxy/Generators/Emitters/*.cs",
+    "../../Castle.Core/DynamicProxy/Generators/Emitters/SimpleAST/*.cs",
+    "../../Castle.Core/DynamicProxy/Internal/*.cs",
+    "../../Castle.Core/DynamicProxy/Serialization/*.cs",
+    "../../Castle.Core/DynamicProxy/Tokens/*.cs",
+    "../../Castle.Core/Properties/InternalsVisibleToTests.cs"
+  ],
+
+  "dependencies": {
+  },
+
+  "frameworks": {
+    "dnxcore50": {
+      "dependencies": {
+        "System.Collections": "4.0.10-beta-22816",
+        "System.Linq": "4.0.0-beta-22816",
+        "System.Threading": "4.0.10-beta-22816",
+        "Microsoft.CSharp": "4.0.0-beta-22816"
+      }
+    }
+  }
+}
