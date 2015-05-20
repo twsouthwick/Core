@@ -14,7 +14,7 @@
 
 namespace Castle.Core.Resource
 {
-	#if !SILVERLIGHT
+	#if !SILVERLIGHT && !CORECLR
 
 	using System;
 

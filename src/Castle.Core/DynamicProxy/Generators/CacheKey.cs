@@ -16,8 +16,9 @@ namespace Castle.DynamicProxy.Generators
 {
 	using System;
 	using System.Reflection;
-
-	[Serializable]
+#if !CORECLR
+    [Serializable]
+#endif
 	public class CacheKey
 	{
 		private readonly MemberInfo target;

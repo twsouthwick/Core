@@ -14,20 +14,21 @@
 
 namespace Castle.DynamicProxy.Contributors
 {
-	using System;
-#if !SILVERLIGHT
+    using System;
+#if !SILVERLIGHT && !CORECLR
 	using System.Runtime.Serialization;
 #endif
 
-	using Castle.DynamicProxy.Generators;
-	using Castle.DynamicProxy.Generators.Emitters;
-	using Castle.DynamicProxy.Generators.Emitters.CodeBuilders;
-	using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-	using Castle.DynamicProxy.Internal;
-	using Castle.DynamicProxy.Serialization;
-	using Castle.DynamicProxy.Tokens;
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.CodeBuilders;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    using Castle.DynamicProxy.Internal;
+    using Castle.DynamicProxy.Serialization;
+    using Castle.DynamicProxy.Tokens;
+    using System.Reflection;
 
-	public abstract class ProxyInstanceContributor : ITypeContributor
+    public abstract class ProxyInstanceContributor : ITypeContributor
 	{
 		// TODO: this whole type (and its descendants) should be #if !SILVERLIGHT... and empty type should be used instead for SL
 
@@ -47,12 +48,16 @@ namespace Castle.DynamicProxy.Contributors
 		public virtual void Generate(ClassEmitter @class, ProxyGenerationOptions options)
 		{
 			var interceptors = @class.GetField("__interceptors");
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			ImplementGetObjectData(@class);
 #endif
 			ImplementProxyTargetAccessor(@class, interceptors);
-			foreach (var attribute in targetType.GetNonInheritableAttributes())
-			{
+#if CORECLR
+            foreach (var attribute in targetType.GetTypeInfo().GetNonInheritableAttributes())
+#else
+            foreach (var attribute in targetType.GetNonInheritableAttributes())
+#endif
+            {
 				@class.DefineCustomAttribute(attribute);
 			}
 		}
@@ -70,7 +75,7 @@ namespace Castle.DynamicProxy.Contributors
 				new ReturnStatement(interceptorsField));
 		}
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 
 		protected void ImplementGetObjectData(ClassEmitter emitter)
 		{

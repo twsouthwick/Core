@@ -14,19 +14,24 @@
 
 namespace Castle.Core.Configuration
 {
-	using System;
-	using System.Threading;
+    using System;
+#if CORECLR
+    using System.Globalization;
+#endif
+    using System.Threading;
 
-	/// <summary>
-	///   This is an abstract <see cref = "IConfiguration" /> implementation
-	///   that deals with methods that can be abstracted away
-	///   from underlying implementations.
-	/// </summary>
-	/// <remarks>
-	///   <para><b>AbstractConfiguration</b> makes easier to implementers 
-	///     to create a new version of <see cref = "IConfiguration" /></para>
-	/// </remarks>
-	[Serializable]
+    /// <summary>
+    ///   This is an abstract <see cref = "IConfiguration" /> implementation
+    ///   that deals with methods that can be abstracted away
+    ///   from underlying implementations.
+    /// </summary>
+    /// <remarks>
+    ///   <para><b>AbstractConfiguration</b> makes easier to implementers 
+    ///     to create a new version of <see cref = "IConfiguration" /></para>
+    /// </remarks>
+#if !CORECLR
+    [Serializable]
+#endif
 	public abstract class AbstractConfiguration : IConfiguration
 	{
 		private readonly ConfigurationAttributeCollection attributes = new ConfigurationAttributeCollection();
@@ -86,9 +91,14 @@ namespace Castle.Core.Configuration
 
 			try
 			{
-				return Convert.ChangeType(Value, type, Thread.CurrentThread.CurrentCulture);
-			}
-			catch (InvalidCastException)
+#if CORECLR
+                return Convert.ChangeType(Value, type, CultureInfo.CurrentCulture);
+#else
+                return Convert.ChangeType(Value, type, Thread.CurrentThread.CurrentCulture);
+#endif
+
+            }
+            catch (InvalidCastException)
 			{
 				return defaultValue;
 			}

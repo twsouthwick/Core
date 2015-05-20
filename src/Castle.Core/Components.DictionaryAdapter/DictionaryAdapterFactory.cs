@@ -25,9 +25,6 @@ namespace Castle.Components.DictionaryAdapter
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Threading;
-#if !SILVERLIGHT
-
-#endif
 	using System.Diagnostics;
 
 #if !SILVERLIGHT && !MONO && !CORECLR // Until support for other platforms is verified
@@ -78,7 +75,7 @@ namespace Castle.Components.DictionaryAdapter
 			return InternalGetAdapter(type, adapter, null);
 		}
 
-#if! SILVERLIGHT
+#if !SILVERLIGHT  
         /// <inheritdoc />
 		public T GetAdapter<T>(NameValueCollection nameValues)
 		{

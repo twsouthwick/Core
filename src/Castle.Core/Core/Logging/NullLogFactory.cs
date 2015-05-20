@@ -16,11 +16,13 @@ namespace Castle.Core.Logging
 {
 	using System;
 
-	/// <summary>
-	/// NullLogFactory used when logging is turned off.
-	/// </summary>
+    /// <summary>
+    /// NullLogFactory used when logging is turned off.
+    /// </summary>
+#if !CORECLR
 	[Serializable]
-	public class NullLogFactory : AbstractLoggerFactory
+#endif
+    public class NullLogFactory : AbstractLoggerFactory
 	{
 		/// <summary>
 		///   Creates an instance of ILogger with the specified name.

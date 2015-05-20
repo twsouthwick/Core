@@ -18,27 +18,28 @@ namespace Castle.Core.Logging
 	using System;
 	using System.Diagnostics;
 	using System.Collections.Generic;
+    using System.Diagnostics;
 #if DOTNET40
 	using System.Security;
 #endif
 
-	/// <summary>
-	///   The TraceLogger sends all logging to the System.Diagnostics.TraceSource
-	///   built into the .net framework.
-	/// </summary>
-	/// <remarks>
-	///   Logging can be configured in the system.diagnostics configuration 
-	///   section. 
-	/// 
-	///   If logger doesn't find a source name with a full match it will
-	///   use source names which match the namespace partially. For example you can
-	///   configure from all castle components by adding a source name with the
-	///   name "Castle". 
-	/// 
-	///   If no portion of the namespace matches the source named "Default" will
-	///   be used.
-	/// </remarks>
-	public class TraceLogger : LevelFilteredLogger
+    /// <summary>
+    ///   The TraceLogger sends all logging to the System.Diagnostics.TraceSource
+    ///   built into the .net framework.
+    /// </summary>
+    /// <remarks>
+    ///   Logging can be configured in the system.diagnostics configuration 
+    ///   section. 
+    /// 
+    ///   If logger doesn't find a source name with a full match it will
+    ///   use source names which match the namespace partially. For example you can
+    ///   configure from all castle components by adding a source name with the
+    ///   name "Castle". 
+    /// 
+    ///   If no portion of the namespace matches the source named "Default" will
+    ///   be used.
+    /// </remarks>
+    public class TraceLogger : LevelFilteredLogger
 	{
 		private static readonly Dictionary<string, TraceSource> cache = new Dictionary<string, TraceSource>();
 

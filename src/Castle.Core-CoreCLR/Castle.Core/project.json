@@ -34,6 +34,7 @@
         "../../Castle.Core/DynamicProxy/Generators/*.cs",
         "../../Castle.Core/DynamicProxy/Generators/Emitters/*.cs",
         "../../Castle.Core/DynamicProxy/Generators/Emitters/SimpleAST/*.cs",
+        "../../Castle.Core/DynamicProxy/Generators/Emitters/CodeBuilders/*.cs",
         "../../Castle.Core/DynamicProxy/Internal/*.cs",
         "../../Castle.Core/DynamicProxy/Serialization/*.cs",
         "../../Castle.Core/DynamicProxy/Tokens/*.cs",
@@ -41,15 +42,12 @@
     ],
 
     "dependencies": {
-        "System.ComponentModel.TypeConverter": "4.0.0-beta-22906",
-        "System.Diagnostics.Debug": "4.0.10-beta-22906",
-        "System.Reflection.TypeExtensions": "4.0.0-beta-22906",
-        "System.Runtime.Extensions": "4.0.10-beta-22906",
-        "System.Reflection.Emit": "4.0.0-beta-22906",
-        "System.Resources.ResourceManager": "4.0.0-beta-22906",
-        "System.IO.FileSystem": "4.0.0-beta-22906",
-        "System.Collections.Specialized": "4.0.0-beta-22906",
-        "System.Xml.XmlDocument": "4.0.0-beta-22816"
+        "System.Threading.Thread": "4.0.0-beta-22906",
+        "System.Console": "4.0.0-beta-22906",
+        "System.Diagnostics.TraceSource": "4.0.0-beta-22906",
+        "System.AppContext": "4.0.0-beta-22816",
+        "System.Xml.XmlSerializer": "4.0.10-beta-22816"
+
     },
 
     "frameworks": {
@@ -61,7 +59,16 @@
                 "System.Collections": "4.0.10-beta-22816",
                 "System.Linq": "4.0.0-beta-22816",
                 "System.Threading": "4.0.10-beta-22816",
-                "Microsoft.CSharp": "4.0.0-beta-22816"
+                "Microsoft.CSharp": "4.0.0-beta-22816",
+                "System.ComponentModel.TypeConverter": "4.0.0-beta-22906",
+                "System.Diagnostics.Debug": "4.0.10-beta-22906",
+                "System.Reflection.TypeExtensions": "4.0.0-beta-22906",
+                "System.Runtime.Extensions": "4.0.10-beta-22906",
+                "System.Reflection.Emit": "4.0.0-beta-22906",
+                "System.Resources.ResourceManager": "4.0.0-beta-22906",
+                "System.IO.FileSystem": "4.0.0-beta-22906",
+                "System.Collections.Specialized": "4.0.0-beta-22906",
+                "System.Xml.XmlDocument": "4.0.0-beta-22816"
             }
         }
     }

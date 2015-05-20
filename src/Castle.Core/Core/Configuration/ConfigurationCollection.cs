@@ -17,11 +17,13 @@ namespace Castle.Core.Configuration
 	using System;
 	using System.Collections.Generic;
 
-	/// <summary>
-	/// A collection of <see cref="IConfiguration"/> objects.
-	/// </summary>
+    /// <summary>
+    /// A collection of <see cref="IConfiguration"/> objects.
+    /// </summary>
+#if !CORECLR
 	[Serializable]
-	public class ConfigurationCollection : List<IConfiguration>
+#endif
+    public class ConfigurationCollection : List<IConfiguration>
 	{
 		/// <summary>
 		/// Creates a new instance of <c>ConfigurationCollection</c>.

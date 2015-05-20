@@ -17,7 +17,7 @@ namespace Castle.Core.Logging
 	using System;
 	using System.IO;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || CORECLR
 	public abstract class AbstractLoggerFactory : ILoggerFactory
 #else
 	[Serializable]
@@ -64,13 +64,17 @@ namespace Castle.Core.Logging
 			}
 			else
 			{
-				result = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName));
-			}
+#if CORECLR
+                result = new FileInfo(Path.Combine(AppContext.BaseDirectory, fileName));
+#else
+                result = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName));
+#endif
+            }
 
 			return result;
 #else
 			return new FileInfo(fileName);
 #endif
-		}
+            }
 	}
 }

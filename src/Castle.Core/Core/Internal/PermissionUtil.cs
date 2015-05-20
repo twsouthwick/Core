@@ -16,9 +16,10 @@ namespace Castle.Core.Internal
 {
 	using System;
 	using System.Security;
-	using System.Security.Permissions;
-	
-#if !SILVERLIGHT
+#if !CORECLR
+    using System.Security.Permissions;
+#endif   
+#if !SILVERLIGHT && !CORECLR
 	public static class PermissionUtil
 	{
 #if DOTNET

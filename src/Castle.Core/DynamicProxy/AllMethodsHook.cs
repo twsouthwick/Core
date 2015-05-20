@@ -17,14 +17,15 @@ namespace Castle.DynamicProxy
 	using System;
 	using System.Collections.Generic;
 	using System.Reflection;
-
+#if !CORECLR
 	[Serializable]
-	public class AllMethodsHook : IProxyGenerationHook
+#endif
+    public class AllMethodsHook : IProxyGenerationHook
 	{
 		protected static readonly ICollection<Type> SkippedTypes = new[]
 		{
 			typeof(object),
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			typeof(MarshalByRefObject),
 			typeof(ContextBoundObject)
 #endif

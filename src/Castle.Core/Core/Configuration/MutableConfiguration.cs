@@ -16,11 +16,13 @@ namespace Castle.Core.Configuration
 {
 	using System;
 
-	/// <summary>
-	/// Summary description for MutableConfiguration.
-	/// </summary>
+    /// <summary>
+    /// Summary description for MutableConfiguration.
+    /// </summary>
+#if !CORECLR
 	[Serializable]
-	public class MutableConfiguration : AbstractConfiguration
+#endif
+    public class MutableConfiguration : AbstractConfiguration
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MutableConfiguration"/> class.

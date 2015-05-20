@@ -14,7 +14,7 @@
 
 namespace Castle.Core.Smtp
 {
-	#if !SILVERLIGHT
+	#if !SILVERLIGHT && !CORECLR
 
 	using System;
 	using System.Collections.Generic;

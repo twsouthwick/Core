@@ -15,10 +15,14 @@
 namespace Castle.Core.Logging
 {
 	using System;
-	using System.Runtime.Serialization;
+#if !CORECLR
+    using System.Runtime.Serialization;
+#endif
 
+#if !CORECLR
 	[Serializable]
-	public class LoggerException : Exception
+#endif
+    public class LoggerException : Exception
 	{
 		public LoggerException()
 		{
@@ -32,7 +36,7 @@ namespace Castle.Core.Logging
 		{
 		}
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 		protected LoggerException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}

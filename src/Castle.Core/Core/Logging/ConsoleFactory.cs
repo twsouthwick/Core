@@ -16,7 +16,7 @@ namespace Castle.Core.Logging
 {
 	using System;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || CORECLR
 	public class ConsoleFactory : ILoggerFactory
 #else
 	[Serializable]

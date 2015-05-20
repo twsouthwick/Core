@@ -19,12 +19,13 @@ namespace Castle.DynamicProxy.Generators
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Reflection;
-#if !SILVERLIGHT
+    using System.Xml.Serialization;
+#if !SILVERLIGHT && !CORECLR
 	using System.Runtime.Serialization;
 	using System.Xml.Serialization;
 #endif
 
-	using Castle.Core.Internal;
+    using Castle.Core.Internal;
 	using Castle.Core.Logging;
 	using Castle.DynamicProxy.Contributors;
 	using Castle.DynamicProxy.Generators.Emitters;
@@ -88,9 +89,13 @@ namespace Castle.DynamicProxy.Generators
 		{
 			Debug.Assert(implementer != null, "implementer != null");
 			Debug.Assert(@interface != null, "@interface != null");
-			Debug.Assert(@interface.IsInterface, "@interface.IsInterface");
+#if CORECLR
+            Debug.Assert(@interface.GetTypeInfo().IsInterface, "@interface.IsInterface");
+#else
+            Debug.Assert(@interface.IsInterface, "@interface.IsInterface");
+#endif
 
-			if (!mapping.ContainsKey(@interface))
+            if (!mapping.ContainsKey(@interface))
 			{
 				AddMappingNoCheck(@interface, implementer, mapping);
 			}
@@ -99,18 +104,18 @@ namespace Castle.DynamicProxy.Generators
 		protected void AddMappingForISerializable(IDictionary<Type, ITypeContributor> typeImplementerMapping,
 		                                          ITypeContributor instance)
 		{
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			AddMapping(typeof(ISerializable), instance, typeImplementerMapping);
 #endif
-		}
+        }
 
-		/// <summary>
-		///   It is safe to add mapping (no mapping for the interface exists)
-		/// </summary>
-		/// <param name = "implementer"></param>
-		/// <param name = "interface"></param>
-		/// <param name = "mapping"></param>
-		protected void AddMappingNoCheck(Type @interface, ITypeContributor implementer,
+        /// <summary>
+        ///   It is safe to add mapping (no mapping for the interface exists)
+        /// </summary>
+        /// <param name = "implementer"></param>
+        /// <param name = "interface"></param>
+        /// <param name = "mapping"></param>
+        protected void AddMappingNoCheck(Type @interface, ITypeContributor implementer,
 		                                 IDictionary<Type, ITypeContributor> mapping)
 		{
 			mapping.Add(@interface, implementer);
@@ -131,9 +136,13 @@ namespace Castle.DynamicProxy.Generators
 
 		protected void CheckNotGenericTypeDefinition(Type type, string argumentName)
 		{
-			if (type != null && type.IsGenericTypeDefinition)
-			{
-				throw new ArgumentException("Type cannot be a generic type definition. Type: " + type.FullName, argumentName);
+#if CORECLR
+            if (type != null && type.GetTypeInfo().IsGenericTypeDefinition)
+#else
+            if (type != null && type.IsGenericTypeDefinition)
+#endif
+            {
+                throw new ArgumentException("Type cannot be a generic type definition. Type: " + type.FullName, argumentName);
 			}
 		}
 
@@ -245,8 +254,12 @@ namespace Castle.DynamicProxy.Generators
 			if (baseConstructorParams != null && baseConstructorParams.Length != 0)
 			{
 				var last = baseConstructorParams.Last();
-				if (last.ParameterType.IsArray && last.HasAttribute<ParamArrayAttribute>())
-				{
+#if CORECLR
+                if (last.ParameterType.IsArray) // TODO: replacement for HasAttribute<T>
+#else
+                if (last.ParameterType.IsArray && last.HasAttribute<ParamArrayAttribute>())
+#endif
+                {
 					var parameter = constructor.ConstructorBuilder.DefineParameter(args.Length, ParameterAttributes.None, last.Name);
 					var builder = AttributeUtil.CreateBuilder<ParamArrayAttribute>();
 					parameter.SetCustomAttribute(builder);
@@ -302,19 +315,24 @@ namespace Castle.DynamicProxy.Generators
 		/// </summary>
 		protected void GenerateParameterlessConstructor(ClassEmitter emitter, Type baseClass, FieldReference interceptorField)
 		{
-			// Check if the type actually has a default constructor
-			var defaultConstructor = baseClass.GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes,
+            // Check if the type actually has a default constructor
+
+#if CORECLR
+            // TODO: CORECLR equivalent of these GetConstructor overloads
+            var defaultConstructor = baseClass.GetConstructor(Type.EmptyTypes);
+#else
+
+            var defaultConstructor = baseClass.GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes,
 			                                                  null);
 
 			if (defaultConstructor == null)
 			{
-				defaultConstructor = baseClass.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes,
-				                                              null);
-
-				if (defaultConstructor == null || defaultConstructor.IsPrivate)
-				{
-					return;
-				}
+				defaultConstructor = baseClass.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
+            }
+#endif
+            if (defaultConstructor == null || defaultConstructor.IsPrivate)
+			{
+				return;
 			}
 
 			var constructor = emitter.CreateConstructor();
@@ -430,12 +448,14 @@ namespace Castle.DynamicProxy.Generators
 			return constructor.IsPublic
 			       || constructor.IsFamily
 			       || constructor.IsFamilyOrAssembly
-#if !Silverlight
+#if !SILVERLIGHT && !CORECLR
 			       || (constructor.IsAssembly && InternalsUtil.IsInternalToDynamicProxy(constructor.DeclaringType.Assembly));
+#elif CORECLR
+                   || (constructor.IsAssembly && InternalsUtil.IsInternalToDynamicProxy(constructor.DeclaringType.GetTypeInfo().Assembly));
 #else
             ;
 #endif
-		}
+        }
 
 		private bool OverridesEqualsAndGetHashCode(Type type)
 		{

@@ -14,7 +14,7 @@
 
 namespace Castle.Components.DictionaryAdapter
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 	using System;
 	using System.ComponentModel;
 

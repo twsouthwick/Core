@@ -17,8 +17,9 @@ namespace Castle.DynamicProxy.Contributors
 	using System;
 	using System.Collections.Generic;
 	using System.Reflection;
-	using System.Runtime.Serialization;
-
+#if !CORECLR
+    using System.Runtime.Serialization;
+#endif
 	using Castle.DynamicProxy.Generators.Emitters;
 	using Castle.DynamicProxy.Generators.Emitters.CodeBuilders;
 	using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
@@ -38,7 +39,7 @@ namespace Castle.DynamicProxy.Contributors
 		                                     string typeId)
 			: base(targetType, interfaces, typeId)
 		{
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			if (targetType.IsSerializable)
 			{
 				implementISerializable = true;
@@ -55,7 +56,7 @@ namespace Castle.DynamicProxy.Contributors
 		public override void Generate(ClassEmitter @class, ProxyGenerationOptions options)
 		{
 			var interceptors = @class.GetField("__interceptors");
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			if (implementISerializable)
 			{
 				ImplementGetObjectData(@class);
@@ -63,13 +64,17 @@ namespace Castle.DynamicProxy.Contributors
 			}
 #endif
 			ImplementProxyTargetAccessor(@class, interceptors);
-			foreach (var attribute in targetType.GetNonInheritableAttributes())
-			{
+#if CORECLR
+            foreach (var attribute in targetType.GetTypeInfo().GetNonInheritableAttributes())
+#else
+            foreach (var attribute in targetType.GetNonInheritableAttributes())
+#endif
+            {
 				@class.DefineCustomAttribute(attribute);
 			}
 		}
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 
 		protected override void AddAddValueInvocation(ArgumentReference serializationInfo, MethodEmitter getObjectData,
 		                                              FieldReference field)

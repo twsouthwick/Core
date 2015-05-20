@@ -19,23 +19,33 @@ namespace Castle.Core.Logging
 	using System.IO;
 	using System.Text;
 
-	/// <summary>
-	///   Creates <see cref = "StreamLogger" /> outputing 
-	///   to files. The name of the file is derived from the log name
-	///   plus the 'log' extension.
-	/// </summary>
+    /// <summary>
+    ///   Creates <see cref = "StreamLogger" /> outputing 
+    ///   to files. The name of the file is derived from the log name
+    ///   plus the 'log' extension.
+    /// </summary>
+#if !CORECLR
 	[Serializable]
+#endif
 	public class StreamLoggerFactory : AbstractLoggerFactory
 	{
 		public override ILogger Create(string name)
 		{
-			return new StreamLogger(name, new FileStream(name + ".log", FileMode.Append, FileAccess.Write), Encoding.Default);
-		}
+#if !CORECLR
+	      return new StreamLogger(name, new FileStream(name + ".log", FileMode.Append, FileAccess.Write), Encoding.Default);
+#else
+          return new StreamLogger(name, new FileStream(name + ".log", FileMode.Append, FileAccess.Write), Encoding.Unicode);
+#endif
 
-		public override ILogger Create(string name, LoggerLevel level)
+        }
+
+        public override ILogger Create(string name, LoggerLevel level)
 		{
-			var logger =
-				new StreamLogger(name, new FileStream(name + ".log", FileMode.Append, FileAccess.Write), Encoding.Default);
+#if !CORECLR
+	        var logger = new StreamLogger(name, new FileStream(name + ".log", FileMode.Append, FileAccess.Write), Encoding.Default);
+#else
+            var logger = new StreamLogger(name, new FileStream(name + ".log", FileMode.Append, FileAccess.Write), Encoding.Unicode);
+#endif
 			logger.Level = level;
 			return logger;
 		}

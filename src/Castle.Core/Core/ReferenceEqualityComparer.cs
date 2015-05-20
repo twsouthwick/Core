@@ -19,8 +19,10 @@ namespace Castle.Core
 	using System.Collections.Generic;
 	using System.Runtime.CompilerServices;
 
+#if !CORECLR
 	[Serializable]
-	public class ReferenceEqualityComparer<T> : IEqualityComparer, IEqualityComparer<T>
+#endif
+    public class ReferenceEqualityComparer<T> : IEqualityComparer, IEqualityComparer<T>
 	{
 		private static readonly ReferenceEqualityComparer<T> instance = new ReferenceEqualityComparer<T>();
 

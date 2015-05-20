@@ -18,7 +18,7 @@ namespace Castle.Core.Logging
 	using System.Globalization;
 #if DOTNET40
 	using System.Security;
-#else
+#elif !CORECLR
 	using System.Security.Permissions;
 #endif
 
@@ -27,7 +27,7 @@ namespace Castle.Core.Logging
 	///	provides a LogLevel attribute and reroutes all functions into
 	///	one Log method.
 	/// </summary>
-#if SILVERLIGHT
+#if SILVERLIGHT || CORECLR
 	public abstract class LevelFilteredLogger : ILogger
 #else
 	[Serializable]
@@ -59,11 +59,11 @@ namespace Castle.Core.Logging
 			ChangeName(loggerName);
 		}
 
-#if !SILVERLIGHT
-		/// <summary>
-		/// Keep the instance alive in a remoting scenario
-		/// </summary>
-		/// <returns></returns>
+#if !SILVERLIGHT && !CORECLR
+        /// <summary>
+        /// Keep the instance alive in a remoting scenario
+        /// </summary>
+        /// <returns></returns>
 #if DOTNET40
 		[SecurityCritical]
 #else
@@ -73,9 +73,10 @@ namespace Castle.Core.Logging
 		{
 			return null;
 		}
+
 #endif
 
-		public abstract ILogger CreateChildLogger(string loggerName);
+        public abstract ILogger CreateChildLogger(string loggerName);
 
 		/// <value>
 		///   The <c>LoggerLevel</c> that this logger

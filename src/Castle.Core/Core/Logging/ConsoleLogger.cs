@@ -15,14 +15,16 @@
 namespace Castle.Core.Logging
 {
 	using System;
-	using System.Globalization;
+    using System.Globalization;
 
-	/// <summary>
-	///	The Logger sending everything to the standard output streams.
-	/// This is mainly for the cases when you have a utility that
-	/// does not have a logger to supply.
-	/// </summary>
+    /// <summary>
+    ///	The Logger sending everything to the standard output streams.
+    /// This is mainly for the cases when you have a utility that
+    /// does not have a logger to supply.
+    /// </summary>
+#if !CORECLR
 	[Serializable]
+#endif
 	public class ConsoleLogger : LevelFilteredLogger
 	{
 		/// <summary>

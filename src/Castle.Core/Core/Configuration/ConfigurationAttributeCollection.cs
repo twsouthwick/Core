@@ -14,7 +14,7 @@
 
 namespace Castle.Core.Configuration
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 
 	using System;
 	using System.Collections.Specialized;

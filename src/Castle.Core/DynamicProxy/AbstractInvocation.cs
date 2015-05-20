@@ -17,7 +17,9 @@ namespace Castle.DynamicProxy
 	using System;
 	using System.Diagnostics;
 	using System.Reflection;
-	using System.Runtime.Serialization;
+#if !CORECLR
+    using System.Runtime.Serialization;
+#endif
 	using Castle.DynamicProxy.Serialization;
 
 #if DOTNET40
@@ -25,11 +27,11 @@ namespace Castle.DynamicProxy
 #endif
 
 	public abstract class AbstractInvocation : IInvocation
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 		, ISerializable
 #endif
-	{
-		private readonly IInterceptor[] interceptors;
+    {
+        private readonly IInterceptor[] interceptors;
 		private readonly object[] arguments;
 		private int currentInterceptorIndex = -1;
 		private Type[] genericMethodArguments;
@@ -151,7 +153,7 @@ namespace Castle.DynamicProxy
 			}
 		}
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 #if DOTNET40
 		[SecurityCritical]
 #endif
