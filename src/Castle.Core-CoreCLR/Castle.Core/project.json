@@ -46,7 +46,8 @@
         "System.Console": "4.0.0-beta-22906",
         "System.Diagnostics.TraceSource": "4.0.0-beta-22906",
         "System.AppContext": "4.0.0-beta-22816",
-        "System.Xml.XmlSerializer": "4.0.10-beta-22816"
+        "System.Xml.XmlSerializer": "4.0.10-beta-22816",
+        "System.Reflection.Primitives": "4.0.0-beta-22906"
 
     },
 

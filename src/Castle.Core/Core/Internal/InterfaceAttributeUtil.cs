@@ -14,12 +14,13 @@
 
 namespace Castle.Core.Internal
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
 
-	internal sealed class InterfaceAttributeUtil
+    internal sealed class InterfaceAttributeUtil
 	{
 		private readonly Aged<Type>[] types; // in order from most to least derived
 		private readonly Dictionary<Type, Aged<object>> singletons;
@@ -44,20 +45,35 @@ namespace Castle.Core.Internal
 
 		public static object[] GetAttributes(Type type, bool inherit)
 		{
-			if (type.IsInterface == false)
+#if CORECLR
+            if (type.GetTypeInfo().IsInterface == false)
+                throw new ArgumentOutOfRangeException("type");
+
+            var attributes = type.GetTypeInfo().GetCustomAttributes(false);
+#else
+            if (type.IsInterface == false)
 				throw new ArgumentOutOfRangeException("type");
 
 			var attributes = type.GetCustomAttributes(false);
-			var baseTypes  = type.GetInterfaces();
-
-			if (baseTypes.Length == 0 || !inherit)
-				return attributes;
+#endif
+            var baseTypes = type.GetInterfaces();
+            if (baseTypes.Length == 0 || !inherit)
+#if CORECLR
+            {
+                return (object[] ) attributes;
+            }
+            return new InterfaceAttributeUtil(type, baseTypes)
+                .GetAttributes((object[])attributes);
+#else
+                return attributes;
 
 			return new InterfaceAttributeUtil(type, baseTypes)
 				.GetAttributes(attributes);
-		}
+#endif
 
-		private InterfaceAttributeUtil(Type derivedType, Type[] baseTypes)
+        }
+
+        private InterfaceAttributeUtil(Type derivedType, Type[] baseTypes)
 		{
 			types      = CollectTypes(derivedType, baseTypes);
 			singletons = new Dictionary<Type, Aged<object>>();
@@ -90,9 +106,13 @@ namespace Castle.Core.Internal
 		private object[] GetAttributes(object[] attributes)
 		{
 			for (index = types.Length - 1; index > 0; index--)
-				ProcessType(CurrentType.GetCustomAttributes(false));
+#if CORECLR
+                ProcessType((object[] ) CurrentType.GetTypeInfo().GetCustomAttributes(false));
+#else
+                ProcessType(CurrentType.GetCustomAttributes(false));
+#endif
 
-			ProcessType(attributes);
+            ProcessType(attributes);
 
 			CollectSingletons();
 			return results.ToArray();
@@ -103,9 +123,12 @@ namespace Castle.Core.Internal
 			foreach (var attribute in attributes)
 			{
 				var attributeType  = attribute.GetType();
-				var attributeUsage = attributeType.GetAttributeUsage();
-
-				if (IsMostDerivedType || attributeUsage.Inherited)
+#if CORECLR
+                var attributeUsage = attributeType.GetTypeInfo().GetCustomAttribute<AttributeUsageAttribute>(); // TODO: Correctness after build
+#else
+                var attributeUsage = attributeType.GetAttributeUsage();
+#endif
+                if (IsMostDerivedType || attributeUsage.Inherited)
 				{
 					if (attributeUsage.AllowMultiple)
 						results.Add(attribute);

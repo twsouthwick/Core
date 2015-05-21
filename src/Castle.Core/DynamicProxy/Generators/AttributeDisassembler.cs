@@ -22,8 +22,10 @@ namespace Castle.DynamicProxy.Generators
 
 	using Castle.DynamicProxy.Internal;
 
+#if !CORECLR
 	[Serializable]
-	public class AttributeDisassembler : IAttributeDisassembler
+#endif
+    public class AttributeDisassembler : IAttributeDisassembler
 	{
 		public CustomAttributeBuilder Disassemble(Attribute attribute)
 		{
@@ -223,17 +225,25 @@ namespace Castle.DynamicProxy.Generators
 			{
 				return false;
 			}
-			if (type.IsEnum)
-			{
-				return Enum.ToObject(type, 0);
+#if CORECLR
+            if (type.GetTypeInfo().IsEnum)
+#else
+            if (type.IsEnum)
+#endif
+            {
+                return Enum.ToObject(type, 0);
 			}
 			if (type == typeof(char))
 			{
 				return Char.MinValue;
 			}
-			if (type.IsPrimitive)
-			{
-				return 0;
+#if CORECLR
+            if (type.GetTypeInfo().IsPrimitive)
+#else
+            if (type.IsPrimitive)
+#endif
+            {
+                return 0;
 			}
 			if(type.IsArray && parameter.IsDefined(typeof(ParamArrayAttribute), true))
 			{

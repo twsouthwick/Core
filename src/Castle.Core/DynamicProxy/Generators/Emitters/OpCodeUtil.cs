@@ -14,10 +14,11 @@
 
 namespace Castle.DynamicProxy.Generators.Emitters
 {
-	using System;
-	using System.Reflection.Emit;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-	internal abstract class OpCodeUtil
+    internal abstract class OpCodeUtil
 	{
 		/// <summary>
 		///   Emits a load indirect opcode of the appropriate type for a value or object reference.
@@ -28,9 +29,13 @@ namespace Castle.DynamicProxy.Generators.Emitters
 		/// <param name = "type"></param>
 		public static void EmitLoadIndirectOpCodeForType(ILGenerator gen, Type type)
 		{
-			if (type.IsEnum)
-			{
-				EmitLoadIndirectOpCodeForType(gen, GetUnderlyingTypeOfEnum(type));
+#if CORECLR
+            if (type.GetTypeInfo().IsEnum)
+#else
+            if (type.IsEnum)
+#endif
+            {
+                EmitLoadIndirectOpCodeForType(gen, GetUnderlyingTypeOfEnum(type));
 				return;
 			}
 
@@ -38,7 +43,11 @@ namespace Castle.DynamicProxy.Generators.Emitters
 			{
 				throw new NotSupportedException("Cannot load ByRef values");
 			}
-			else if (type.IsPrimitive && type != typeof(IntPtr) && type != typeof(UIntPtr))
+#if CORECLR
+            else if (type.GetTypeInfo().IsPrimitive && type != typeof(IntPtr) && type != typeof(UIntPtr))
+#else
+            else if (type.IsPrimitive && type != typeof(IntPtr) && type != typeof(UIntPtr))
+#endif
 			{
 				var opCode = LdindOpCodesDictionary.Instance[type];
 
@@ -49,9 +58,13 @@ namespace Castle.DynamicProxy.Generators.Emitters
 
 				gen.Emit(opCode);
 			}
-			else if (type.IsValueType)
-			{
-				gen.Emit(OpCodes.Ldobj, type);
+#if CORECLR
+            else if (type.GetTypeInfo().IsValueType)
+#else
+            else if (type.IsValueType)
+#endif
+            {
+                gen.Emit(OpCodes.Ldobj, type);
 			}
 			else if (type.IsGenericParameter)
 			{
@@ -97,9 +110,13 @@ namespace Castle.DynamicProxy.Generators.Emitters
 		/// </summary>
 		public static void EmitLoadOpCodeForDefaultValueOfType(ILGenerator gen, Type type)
 		{
-			if (type.IsPrimitive)
-			{
-				var opCode = LdcOpCodesDictionary.Instance[type];
+#if CORECLR
+            if (type.GetTypeInfo().IsPrimitive)
+#else
+            if (type.IsPrimitive)
+#endif
+            {
+                var opCode = LdcOpCodesDictionary.Instance[type];
 				switch (opCode.StackBehaviourPush)
 				{
 					case StackBehaviour.Pushi:
@@ -138,9 +155,13 @@ namespace Castle.DynamicProxy.Generators.Emitters
 		/// <param name = "type"></param>
 		public static void EmitStoreIndirectOpCodeForType(ILGenerator gen, Type type)
 		{
-			if (type.IsEnum)
-			{
-				EmitStoreIndirectOpCodeForType(gen, GetUnderlyingTypeOfEnum(type));
+#if CORECLR
+            if (type.GetTypeInfo().IsEnum)
+#else
+            if (type.IsEnum)
+#endif
+            {
+                EmitStoreIndirectOpCodeForType(gen, GetUnderlyingTypeOfEnum(type));
 				return;
 			}
 
@@ -148,9 +169,13 @@ namespace Castle.DynamicProxy.Generators.Emitters
 			{
 				throw new NotSupportedException("Cannot store ByRef values");
 			}
-			else if (type.IsPrimitive && type != typeof(IntPtr) && type != typeof(UIntPtr))
-			{
-				var opCode = StindOpCodesDictionary.Instance[type];
+#if CORECLR
+            else if (type.GetTypeInfo().IsPrimitive && type != typeof(IntPtr) && type != typeof(UIntPtr))
+#else
+            else if (type.IsPrimitive && type != typeof(IntPtr) && type != typeof(UIntPtr))
+#endif
+            {
+                var opCode = StindOpCodesDictionary.Instance[type];
 
 				if (Equals(opCode, StindOpCodesDictionary.EmptyOpCode))
 				{
@@ -159,9 +184,13 @@ namespace Castle.DynamicProxy.Generators.Emitters
 
 				gen.Emit(opCode);
 			}
-			else if (type.IsValueType)
-			{
-				gen.Emit(OpCodes.Stobj, type);
+#if CORECLR
+            else if (type.GetTypeInfo().IsValueType)
+#else
+            else if (type.IsValueType)
+#endif
+            {
+                gen.Emit(OpCodes.Stobj, type);
 			}
 			else if (type.IsGenericParameter)
 			{
@@ -176,9 +205,12 @@ namespace Castle.DynamicProxy.Generators.Emitters
 		private static Type GetUnderlyingTypeOfEnum(Type enumType)
 		{
 			var baseType = (Enum)Activator.CreateInstance(enumType);
-			var code = baseType.GetTypeCode();
-
-			switch (code)
+#if CORECLR
+            var code = ((IConvertible)baseType).GetTypeCode(); // TODO: VERIFY CORRECTNESS WHEN BUILDS.
+#else
+            var code = baseType.GetTypeCode();
+#endif
+            switch (code)
 			{
 				case TypeCode.SByte:
 					return typeof(SByte);

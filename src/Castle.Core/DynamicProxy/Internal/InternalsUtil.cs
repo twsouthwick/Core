@@ -58,11 +58,14 @@ namespace Castle.DynamicProxy.Internal
 				{
 					return internalsToDynProxy[asm];
 				}
+#if CORECLR
+                var internalsVisibleTo = asm.GetCustomAttributes<InternalsVisibleToAttribute>();
+#else
+                var internalsVisibleTo = asm.GetAttributes<InternalsVisibleToAttribute>();
+#endif
+                var found = internalsVisibleTo.Any(VisibleToDynamicProxy);
 
-				var internalsVisibleTo = asm.GetAttributes<InternalsVisibleToAttribute>();
-				var found = internalsVisibleTo.Any(VisibleToDynamicProxy);
-
-				internalsToDynProxy.Add(asm, found);
+                internalsToDynProxy.Add(asm, found);
 				return found;
 			}
 		}
@@ -89,10 +92,13 @@ namespace Castle.DynamicProxy.Internal
 			{
 				return true;
 			}
-
-			if (method.DeclaringType.Assembly.IsInternalToDynamicProxy() && method.IsAssembly)
-			{
-				return true;
+#if CORECLR
+            if (method.DeclaringType.GetTypeInfo().Assembly.IsInternalToDynamicProxy() && method.IsAssembly)
+#else
+            if (method.DeclaringType.Assembly.IsInternalToDynamicProxy() && method.IsAssembly)
+#endif
+            {
+                return true;
 			}
 			return false;
 		}

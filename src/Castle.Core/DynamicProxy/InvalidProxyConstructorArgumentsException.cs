@@ -15,9 +15,11 @@
 namespace Castle.DynamicProxy
 {
 	using System;
-
+    
+#if !CORECLR
 	[Serializable]
-	public class InvalidProxyConstructorArgumentsException : ArgumentException
+#endif
+    public class InvalidProxyConstructorArgumentsException : ArgumentException
 	{
 		public InvalidProxyConstructorArgumentsException(string message, Type proxyType, Type classToProxy) : base(message)
 		{
