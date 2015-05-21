@@ -14,10 +14,11 @@
 
 namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-	using System;
-	using System.Reflection.Emit;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-	public class ConvertExpression : Expression
+    public class ConvertExpression : Expression
 	{
 		private readonly Expression right;
 		private Type fromType;
@@ -53,12 +54,17 @@ namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 			{
 				target = target.GetElementType();
 			}
-
-			if (target.IsValueType)
+#if CORECLR
+            if (target.GetTypeInfo().IsValueType)
+            {
+                if (fromType.GetTypeInfo().IsValueType)
+#else
+            if (target.IsValueType)
 			{
 				if (fromType.IsValueType)
-				{
-					throw new NotImplementedException("Cannot convert between distinct value types");
+#endif
+                {
+                throw new NotImplementedException("Cannot convert between distinct value types");
 				}
 				else
 				{
@@ -78,10 +84,14 @@ namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 			}
 			else
 			{
-				if (fromType.IsValueType)
-				{
-					// Box conversion
-					gen.Emit(OpCodes.Box, fromType);
+#if CORECLR
+                if (fromType.GetTypeInfo().IsValueType)
+#else
+                if (fromType.IsValueType)
+#endif
+                {
+                    // Box conversion
+                    gen.Emit(OpCodes.Box, fromType);
 					EmitCastIfNeeded(typeof(object), target, gen);
 				}
 				else
@@ -102,13 +112,21 @@ namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 			{
 				gen.Emit(OpCodes.Box, from);
 			}
-			else if (target.IsGenericType && target != from)
-			{
-				gen.Emit(OpCodes.Castclass, target);
+#if CORECLR
+            else if (target.GetTypeInfo().IsGenericType && target != from)
+#else
+            else if (target.IsGenericType && target != from)
+#endif
+            {
+                gen.Emit(OpCodes.Castclass, target);
 			}
-			else if (target.IsSubclassOf(from))
-			{
-				gen.Emit(OpCodes.Castclass, target);
+#if CORECLR
+            else if (target.GetTypeInfo().IsSubclassOf(from))
+#else
+            else if (target.IsSubclassOf(from))
+#endif
+            {
+                gen.Emit(OpCodes.Castclass, target);
 			}
 		}
 	}

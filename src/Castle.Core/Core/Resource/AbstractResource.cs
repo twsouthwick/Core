@@ -22,11 +22,13 @@ namespace Castle.Core.Resource
 	{
 #if SILVERLIGHT
         protected static readonly String DefaultBasePath = String.Empty;
+#elif CORECLR 
+        protected static readonly String DefaultBasePath = AppContext.BaseDirectory;
 #else
         protected static readonly String DefaultBasePath = AppDomain.CurrentDomain.BaseDirectory;
 #endif
 
-		public virtual String FileBasePath
+        public virtual String FileBasePath
 		{
 			get { return DefaultBasePath; }
 		}

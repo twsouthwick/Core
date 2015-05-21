@@ -18,10 +18,12 @@ namespace Castle.Core.Resource
 	using System.Globalization;
 	using System.IO;
 
-	/// <summary>
-	/// Enable access to files on network shares
-	/// </summary>
+    /// <summary>
+    /// Enable access to files on network shares
+    /// </summary>
+#if #CORECLR
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Unc")]
+#endif
 	public class UncResource : AbstractStreamResource
 	{
 		private String basePath;

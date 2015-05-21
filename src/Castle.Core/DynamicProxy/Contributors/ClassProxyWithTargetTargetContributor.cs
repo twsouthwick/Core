@@ -50,8 +50,12 @@ namespace Castle.DynamicProxy.Contributors
 			{
 				var item = new InterfaceMembersOnClassCollector(@interface,
 				                                                true,
-				                                                targetType.GetInterfaceMap(@interface)) { Logger = Logger };
-				item.CollectMembersToProxy(hook);
+#if CORECLR
+                                                                targetType.GetTypeInfo().GetRuntimeInterfaceMap(@interface)) { Logger = Logger }; // TODO: Verify correctness
+#else
+                                                                targetType.GetInterfaceMap(@interface)) { Logger = Logger };
+#endif
+                item.CollectMembersToProxy(hook);
 				yield return item;
 			}
 		}
@@ -107,9 +111,13 @@ namespace Castle.DynamicProxy.Contributors
 
 		private IInvocationCreationContributor GetContributor(Type @delegate, MetaMethod method)
 		{
-			if (@delegate.IsGenericType == false)
-			{
-				return new InvocationWithDelegateContributor(@delegate, targetType, method, namingScope);
+#if CORECLR
+            if (@delegate.GetTypeInfo().IsGenericType == false)
+#else
+            if (@delegate.IsGenericType == false)
+#endif
+            {
+                return new InvocationWithDelegateContributor(@delegate, targetType, method, namingScope);
 			}
 			return new InvocationWithGenericDelegateContributor(@delegate,
 			                                                    method,
@@ -119,9 +127,13 @@ namespace Castle.DynamicProxy.Contributors
 		private Type GetDelegateType(MetaMethod method, ClassEmitter @class, ProxyGenerationOptions options)
 		{
 			var scope = @class.ModuleScope;
-			var key = new CacheKey(
-				typeof(Delegate),
-				targetType,
+            var key = new CacheKey(
+#if CORECLR
+                typeof(Delegate).GetTypeInfo(),
+#else
+                typeof(Delegate),
+#endif
+                targetType,
 				new[] { method.MethodOnTarget.ReturnType }
 					.Concat(ArgumentsUtil.GetTypes(method.MethodOnTarget.GetParameters())).
 					ToArray(),

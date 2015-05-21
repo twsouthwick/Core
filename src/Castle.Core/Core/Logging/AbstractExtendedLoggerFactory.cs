@@ -18,7 +18,7 @@ namespace Castle.Core.Logging
     using System;
     using System.IO;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || CORECLR
 	public abstract class AbstractExtendedLoggerFactory : IExtendedLoggerFactory
 #else
 	public abstract class AbstractExtendedLoggerFactory : MarshalByRefObject, IExtendedLoggerFactory

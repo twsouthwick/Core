@@ -112,8 +112,12 @@ namespace Castle.Core.Logging
 			{
 				if (writer != null)
 				{
-					writer.Close();
-					writer = null;
+#if CORECLR
+                    writer.Dispose();
+#else
+                    writer.Close();
+#endif
+                    writer = null;
 				}
 			}
 		}
