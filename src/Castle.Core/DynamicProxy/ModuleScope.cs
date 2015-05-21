@@ -183,9 +183,13 @@ namespace Castle.DynamicProxy
 		/// <returns></returns>
 		public static byte[] GetKeyPair()
 		{
-			using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Castle.DynamicProxy.DynProxy.snk"))
-			{
-				if (stream == null)
+#if CORECLR
+            using (var stream = typeof(ModuleScope).GetTypeInfo().Assembly.GetManifestResourceStream("Castle.DynamicProxy.DynProxy.snk"))
+#else
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Castle.DynamicProxy.DynProxy.snk"))
+#endif
+            {
+                if (stream == null)
 				{
 					throw new MissingManifestResourceException(
 						"Should have a Castle.DynamicProxy.DynProxy.snk as an embedded resource, so Dynamic Proxy could sign generated assembly");
@@ -335,7 +339,7 @@ namespace Castle.DynamicProxy
 		{
 			var assemblyName = GetAssemblyName(signStrongName);
 			var moduleName = signStrongName ? StrongNamedModuleName : WeakNamedModuleName;
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			if (savePhysicalAssembly)
 			{
 				AssemblyBuilder assemblyBuilder;
@@ -363,12 +367,17 @@ namespace Castle.DynamicProxy
 			else
 #endif
 			{
-				var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
-					assemblyName,
+#if CORECLR
+                var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+                var module = assemblyBuilder.DefineDynamicModule(moduleName);
+#else
+                var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(
+                    assemblyName,
 					AssemblyBuilderAccess.Run);
 
 				var module = assemblyBuilder.DefineDynamicModule(moduleName, false);
-				return module;
+#endif
+                return module;
 			}
 		}
 
@@ -380,7 +389,7 @@ namespace Castle.DynamicProxy
 			                   		Name = signStrongName ? strongAssemblyName : weakAssemblyName
 			                   	};
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			if (signStrongName)
 			{
 				byte[] keyPairStream = GetKeyPair();
@@ -393,7 +402,7 @@ namespace Castle.DynamicProxy
 			return assemblyName;
 		}
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR // TODO ; Can this work in Core?
 		/// <summary>
 		///   Saves the generated assembly with the name and directory information given when this <see cref = "ModuleScope" /> instance was created (or with
 		///   the <see cref = "DEFAULT_FILE_NAME" /> and current directory if none was given).
@@ -493,13 +502,14 @@ namespace Castle.DynamicProxy
 				File.Delete(assemblyFilePath);
 			}
 
-			AddCacheMappings(assemblyBuilder);
-			assemblyBuilder.Save(assemblyFileName);
-			return assemblyFilePath;
+            AddCacheMappings(assemblyBuilder);
+            assemblyBuilder.Save(assemblyFileName);
+
+            return assemblyFilePath;
 		}
 #endif
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 		private void AddCacheMappings(AssemblyBuilder builder)
 		{
 			Dictionary<CacheKey, string> mappings;
@@ -522,7 +532,7 @@ namespace Castle.DynamicProxy
 		}
 #endif
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 		/// <summary>
 		///   Loads the generated types from the given assembly into this <see cref = "ModuleScope" />'s cache.
 		/// </summary>
@@ -563,7 +573,7 @@ namespace Castle.DynamicProxy
 		}
 #endif
 
-		public TypeBuilder DefineType(bool inSignedModulePreferably, string name, TypeAttributes flags)
+        public TypeBuilder DefineType(bool inSignedModulePreferably, string name, TypeAttributes flags)
 		{
 			var module = ObtainDynamicModule(disableSignedModule == false && inSignedModulePreferably);
 			return module.DefineType(name, flags);

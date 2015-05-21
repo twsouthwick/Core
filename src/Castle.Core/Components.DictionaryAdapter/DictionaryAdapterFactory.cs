@@ -154,11 +154,14 @@ namespace Castle.Components.DictionaryAdapter
 				{
 					if (descriptor == null && other != null)
 						descriptor = other.CreateDescriptor();
-
-					var appDomain = Thread.GetDomain();
+#if CORECLR
+                    throw new NotImplementedException("TODO: Find replacement");
+#else
+                    var appDomain = Thread.GetDomain();
 					var typeBuilder = CreateTypeBuilder(type, appDomain);
-					meta = CreateAdapterMeta(type, typeBuilder, descriptor);
-					interfaceToMeta.Add(type, meta);
+                    meta = CreateAdapterMeta(type, typeBuilder, descriptor);
+#endif
+                    interfaceToMeta.Add(type, meta);
 					return meta;
 				}
 			}
@@ -170,16 +173,17 @@ namespace Castle.Components.DictionaryAdapter
 			return meta.CreateInstance(dictionary, descriptor);
 		}
 
-#region Type Builders
-	
-		private static TypeBuilder CreateTypeBuilder(Type type, AppDomain appDomain)
+        #region Type Builders
+
+#if !CORECLR
+        private static TypeBuilder CreateTypeBuilder(Type type, AppDomain appDomain)
 		{
 			var assemblyName = new AssemblyName("CastleDictionaryAdapterAssembly");
 			var assemblyBuilder = appDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
 			var moduleBuilder = assemblyBuilder.DefineDynamicModule("CastleDictionaryAdapterModule");
 			return CreateAdapterType(type, moduleBuilder);
 		}
-
+#endif
 		private static TypeBuilder CreateAdapterType(Type type, ModuleBuilder moduleBuilder)
 		{
 			var typeBuilder = moduleBuilder.DefineType("CastleDictionaryAdapterType",
@@ -226,9 +230,13 @@ namespace Castle.Components.DictionaryAdapter
 			{
 				CreateAdapterProperty(typeBuilder, property.Value);
 			}
+#if CORECLR
+            var implementation = typeBuilder.CreateTypeInfo();
+#else
+            var implementation = typeBuilder.CreateType();
+#endif
 
-			var implementation = typeBuilder.CreateType();
-			var creator = (Func<DictionaryAdapterInstance, IDictionaryAdapter>)Delegate.CreateDelegate
+            var creator = (Func<DictionaryAdapterInstance, IDictionaryAdapter>)Delegate.CreateDelegate
 			(
 				typeof(Func<DictionaryAdapterInstance, IDictionaryAdapter>),
 				implementation,

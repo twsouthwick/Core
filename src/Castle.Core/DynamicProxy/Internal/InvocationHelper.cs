@@ -85,10 +85,16 @@ namespace Castle.DynamicProxy.Internal
 			}
 			var declaringType = proxiedMethod.DeclaringType;
 			MethodInfo methodOnTarget = null;
-			if (declaringType.IsInterface)
-			{
-				var mapping = type.GetInterfaceMap(declaringType);
-				var index = Array.IndexOf(mapping.InterfaceMethods, proxiedMethod);
+#if CORECLR
+            if (declaringType.GetTypeInfo().IsInterface)
+            {
+                var mapping = type.GetTypeInfo().GetRuntimeInterfaceMap(declaringType); // TODO: Is GetRuntimeInterfaceMap correct
+#else
+            if (declaringType.IsInterface)
+            {
+                var mapping = type.GetInterfaceMap(declaringType);
+#endif
+                var index = Array.IndexOf(mapping.InterfaceMethods, proxiedMethod);
 				Debug.Assert(index != -1);
 				methodOnTarget = mapping.TargetMethods[index];
 			}

@@ -67,9 +67,13 @@ namespace Castle.Components.DictionaryAdapter
 
 					if (IsAcceptedType(type))
 					{
-						if (type.IsInterface)
-						{
-							if (property.IsDynamicProperty == false)
+#if CORECLR
+                        if (type.GetTypeInfo().IsInterface)
+#else
+                        if (type.IsInterface)
+#endif
+                        {
+                            if (property.IsDynamicProperty == false)
 							{
 								if (storedValue == null)
 								{
@@ -118,12 +122,14 @@ namespace Castle.Components.DictionaryAdapter
 				{
 					using (dictionaryAdapter.SuppressNotificationsBlock())
 					{
-						if (storedValue is ISupportInitialize)
+#if !CORECLR // CoreCLR currently doesn't support ISupportInitialize
+                        if (storedValue is ISupportInitialize)
 						{
 							((ISupportInitialize)storedValue).BeginInit();
 							((ISupportInitialize)storedValue).EndInit();
 						}
-						if (initializer != null)
+#endif
+                        if (initializer != null)
 						{
 							initializer.Initialize(dictionaryAdapter, storedValue);
 						}
@@ -139,10 +145,14 @@ namespace Castle.Components.DictionaryAdapter
 
 		private static bool IsAcceptedType(Type type)
 		{
-			return type != null && type != typeof(String) && !type.IsPrimitive && !type.IsEnum;
-		}
+#if CORECLR
+            return type != null && type != typeof(String) && !type.GetTypeInfo().IsPrimitive && !type.GetTypeInfo().IsEnum;
+#else
+            return type != null && type != typeof(String) && !type.IsPrimitive && !type.IsEnum;
+#endif
+        }
 
-		private static Type GetInferredType(IDictionaryAdapter dictionaryAdapter, PropertyDescriptor property, out IValueInitializer initializer)
+        private static Type GetInferredType(IDictionaryAdapter dictionaryAdapter, PropertyDescriptor property, out IValueInitializer initializer)
 		{
 			Type type = null;
 			initializer = null;
@@ -155,12 +165,16 @@ namespace Castle.Components.DictionaryAdapter
 
 			Type collectionType = null;
 
-			if (type.IsGenericType)
-			{
-				var genericDef = type.GetGenericTypeDefinition();
+#if CORECLR
+            if (type.GetTypeInfo().IsGenericType)
+#else
+            if (type.IsGenericType)
+#endif
+            {
+                var genericDef = type.GetGenericTypeDefinition();
 				var genericArg = type.GetGenericArguments()[0];
 				bool isBindingList = 
-#if SILVERLIGHT
+#if SILVERLIGHT || CORECLR
 					false;
 #else
 					genericDef == typeof(System.ComponentModel.BindingList<>);
@@ -170,14 +184,14 @@ namespace Castle.Components.DictionaryAdapter
 				{
 					if (dictionaryAdapter.CanEdit)
 					{
-#if SILVERLIGHT
-						collectionType =  typeof(EditableList<>);
+#if SILVERLIGHT || CORECLR
+                        collectionType =  typeof(EditableList<>);
 #else
 						collectionType = isBindingList ? typeof(EditableBindingList<>) : typeof(EditableList<>);
 #endif
 					}
-					
-#if SILVERLIGHT //never true
+
+#if SILVERLIGHT || CORECLR //never true
 #else
 					if (isBindingList && genericArg.IsInterface)
 					{
@@ -187,8 +201,8 @@ namespace Castle.Components.DictionaryAdapter
 							null, addNew, null, null, null);
 					}
 #endif
-				}
-				else if (genericDef == typeof(IList<>) || genericDef == typeof(ICollection<>))
+                }
+                else if (genericDef == typeof(IList<>) || genericDef == typeof(ICollection<>))
 				{
 					collectionType = dictionaryAdapter.CanEdit ? typeof(EditableList<>) : typeof(List<>);
 				}

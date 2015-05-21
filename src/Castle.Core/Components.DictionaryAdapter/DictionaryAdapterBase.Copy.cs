@@ -14,10 +14,11 @@
 
 namespace Castle.Components.DictionaryAdapter
 {
-	using System;
-	using System.Linq;
+    using System;
+    using System.Linq;
+    using System.Reflection;
 
-	public abstract partial class DictionaryAdapterBase
+    public abstract partial class DictionaryAdapterBase
 	{
 		public void CopyTo(IDictionaryAdapter other)
 		{

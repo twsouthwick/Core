@@ -47,7 +47,7 @@ namespace Castle.DynamicProxy
 		{
 			proxyBuilder = builder;
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			if (HasSecurityPermission())
 			{
 				Logger = new TraceLogger("Castle.DynamicProxy", LoggerLevel.Warn);
@@ -55,7 +55,7 @@ namespace Castle.DynamicProxy
 #endif
 		}
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 		private bool HasSecurityPermission()
 		{
 			const SecurityPermissionFlag flag = SecurityPermissionFlag.ControlEvidence | SecurityPermissionFlag.ControlPolicy;
@@ -63,10 +63,10 @@ namespace Castle.DynamicProxy
 		}
 #endif
 
-		/// <summary>
-		///   Initializes a new instance of the <see cref = "ProxyGenerator" /> class.
-		/// </summary>
-		public ProxyGenerator() : this(new DefaultProxyBuilder())
+        /// <summary>
+        ///   Initializes a new instance of the <see cref = "ProxyGenerator" /> class.
+        /// </summary>
+        public ProxyGenerator() : this(new DefaultProxyBuilder())
 		{
 		}
 
@@ -325,10 +325,13 @@ namespace Castle.DynamicProxy
 			{
 				throw new ArgumentNullException("interceptors");
 			}
-
-			if (!interfaceToProxy.IsInterface)
-			{
-				throw new ArgumentException("Specified type is not an interface", "interfaceToProxy");
+#if CORECLR
+            if (!interfaceToProxy.GetTypeInfo().IsInterface)
+#else
+            if (!interfaceToProxy.IsInterface)
+#endif
+            {
+                throw new ArgumentException("Specified type is not an interface", "interfaceToProxy");
 			}
 
 			var targetType = target.GetType();
@@ -580,14 +583,17 @@ namespace Castle.DynamicProxy
 			{
 				throw new ArgumentNullException("interceptors");
 			}
-
-			if (!interfaceToProxy.IsInterface)
-			{
-				throw new ArgumentException("Specified type is not an interface", "interfaceToProxy");
+#if CORECLR
+            if (!interfaceToProxy.GetTypeInfo().IsInterface)
+#else
+            if (!interfaceToProxy.IsInterface)
+#endif
+            {
+                throw new ArgumentException("Specified type is not an interface", "interfaceToProxy");
 			}
 
 			var isRemotingProxy = false;
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			if (target != null)
 			{
 				isRemotingProxy = RemotingServices.IsTransparentProxy(target);
@@ -859,10 +865,13 @@ namespace Castle.DynamicProxy
 			{
 				throw new ArgumentNullException("interceptors");
 			}
-
-			if (!interfaceToProxy.IsInterface)
-			{
-				throw new ArgumentException("Specified type is not an interface", "interfaceToProxy");
+#if CORECLR
+            if (!interfaceToProxy.GetTypeInfo().IsInterface)
+#else
+            if (!interfaceToProxy.IsInterface)
+#endif
+            {
+                throw new ArgumentException("Specified type is not an interface", "interfaceToProxy");
 			}
 
 			CheckNotGenericTypeDefinition(interfaceToProxy, "interfaceToProxy");
@@ -1169,9 +1178,13 @@ namespace Castle.DynamicProxy
 			{
 				throw new ArgumentNullException("options");
 			}
-			if (!classToProxy.IsClass)
-			{
-				throw new ArgumentException("'classToProxy' must be a class", "classToProxy");
+#if CORECLR
+            if (!classToProxy.GetTypeInfo().IsClass)
+#else
+            if (!classToProxy.IsClass)
+#endif
+            {
+                throw new ArgumentException("'classToProxy' must be a class", "classToProxy");
 			}
 
 			CheckNotGenericTypeDefinition(classToProxy, "classToProxy");
@@ -1433,9 +1446,13 @@ namespace Castle.DynamicProxy
 			{
 				throw new ArgumentNullException("options");
 			}
-			if (!classToProxy.IsClass)
-			{
-				throw new ArgumentException("'classToProxy' must be a class", "classToProxy");
+#if CORECLR
+            if (!classToProxy.GetTypeInfo().IsClass)
+#else
+            if (!classToProxy.IsClass)
+#endif
+            {
+                throw new ArgumentException("'classToProxy' must be a class", "classToProxy");
 			}
 
 			CheckNotGenericTypeDefinition(classToProxy, "classToProxy");
@@ -1484,9 +1501,13 @@ namespace Castle.DynamicProxy
 
 		protected void CheckNotGenericTypeDefinition(Type type, string argumentName)
 		{
-			if (type != null && type.IsGenericTypeDefinition)
-			{
-				throw new GeneratorException(string.Format("Can not create proxy for type {0} because it is an open generic type.",
+#if CORECLR
+            if (type != null && type.GetTypeInfo().IsGenericTypeDefinition)
+#else
+            if (type != null && type.IsGenericTypeDefinition)
+#endif
+            {
+                throw new GeneratorException(string.Format("Can not create proxy for type {0} because it is an open generic type.",
 														   type.GetBestName()));
 			}
 		}

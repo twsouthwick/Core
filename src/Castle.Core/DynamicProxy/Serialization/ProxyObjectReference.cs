@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 
 namespace Castle.DynamicProxy.Serialization
 {

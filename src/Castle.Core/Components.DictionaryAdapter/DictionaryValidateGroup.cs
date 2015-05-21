@@ -65,10 +65,14 @@ namespace Castle.Components.DictionaryAdapter
 			get
 			{
 				return string.Join(Environment.NewLine,
-					propertyNames.Select(propertyName => adapter[propertyName])
-					.Where(errors => !string.IsNullOrEmpty(errors)).ToArray());
-			}
-		}
+#if CORECLR
+                propertyNames.Select(propertyName => adapter.GetProperty(propertyName, false )).Where(errors => errors != null).ToArray());
+#else
+                propertyNames.Select(propertyName => adapter[propertyName])
+                .Where(errors => !string.IsNullOrEmpty(errors)).ToArray());
+#endif
+            }
+        }
 
 		public string this[string columnName]
 		{
@@ -76,9 +80,13 @@ namespace Castle.Components.DictionaryAdapter
 			{
 				if (Array.IndexOf(propertyNames, columnName) >= 0)
 				{
-					return adapter[columnName];
-				}
-				return string.Empty;
+#if CORECLR
+                    return adapter[columnName];
+#else
+                    return adapter[columnName];
+#endif
+                }
+                return string.Empty;
 			}
 		}
 

@@ -14,16 +14,17 @@
 
 namespace Castle.Components.DictionaryAdapter
 {
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.Text;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Reflection;
+    using System.Text;
 
-	/// <summary>
-	/// Identifies a property should be represented as a delimited string value.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    /// <summary>
+    /// Identifies a property should be represented as a delimited string value.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public class StringListAttribute : DictionaryBehaviorAttribute, IDictionaryPropertyGetter, IDictionaryPropertySetter
 	{
 		public StringListAttribute()
@@ -42,12 +43,15 @@ namespace Castle.Components.DictionaryAdapter
 			string key, object storedValue, PropertyDescriptor property, bool ifExists)
 		{
 			var propertyType = property.PropertyType;
-
-			if (storedValue == null || !storedValue.GetType().IsInstanceOfType(propertyType))
-			{
+            if (storedValue == null || !storedValue.GetType().IsInstanceOfType(propertyType))
+            {
+#if CORECLR
+                if (propertyType.DeclaringType.GetTypeInfo().IsGenericType)
+#else
 				if (propertyType.IsGenericType)
-				{
-					var genericDef = propertyType.GetGenericTypeDefinition();
+#endif
+                {
+                var genericDef = propertyType.GetGenericTypeDefinition();
 
 					if (genericDef == typeof(IList<>) || genericDef == typeof(ICollection<>) ||
 						genericDef == typeof(List<>) || genericDef == typeof(IEnumerable<>))

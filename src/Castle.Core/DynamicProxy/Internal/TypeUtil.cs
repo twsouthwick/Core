@@ -29,10 +29,13 @@ namespace Castle.DynamicProxy.Internal
 			{
 				throw new ArgumentNullException("type");
 			}
-
-			if (type.IsClass == false)
-			{
-				throw new ArgumentException(string.Format("Type {0} is not a class type. This method supports only classes", type));
+#if CORECLR
+            if (type.GetTypeInfo().IsClass == false)
+#else
+            if (type.IsClass == false)
+#endif
+            {
+                throw new ArgumentException(string.Format("Type {0} is not a class type. This method supports only classes", type));
 			}
 
 			var fields = new List<FieldInfo>();
@@ -42,10 +45,14 @@ namespace Castle.DynamicProxy.Internal
 				Debug.Assert(currentType != null);
 				var currentFields = currentType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 				fields.AddRange(currentFields);
-				currentType = currentType.BaseType;
-			}
+#if CORECLR
+                currentType = currentType.GetTypeInfo().BaseType;
+#else
+                currentType = currentType.BaseType;
+#endif
+            }
 
-			return fields.ToArray();
+            return fields.ToArray();
 		}
 
 		/// <summary>
@@ -98,13 +105,20 @@ namespace Castle.DynamicProxy.Internal
 
 		public static Type GetClosedParameterType(this AbstractTypeEmitter type, Type parameter)
 		{
-			if (parameter.IsGenericTypeDefinition)
-			{
-				return parameter.GetGenericTypeDefinition().MakeGenericType(type.GetGenericArgumentsFor(parameter));
+#if CORECLR
+            if (parameter.GetTypeInfo().IsGenericTypeDefinition)
+#else
+            if (parameter.IsGenericTypeDefinition)
+#endif
+            {
+                return parameter.GetGenericTypeDefinition().MakeGenericType(type.GetGenericArgumentsFor(parameter));
 			}
-
-			if (parameter.IsGenericType)
-			{
+#if CORECLR
+            if (parameter.GetTypeInfo().IsGenericType)
+#else
+            if (parameter.IsGenericType)
+#endif
+            {
 				var arguments = parameter.GetGenericArguments();
 				if (CloseGenericParametersIfAny(type, arguments))
 				{
@@ -162,13 +176,23 @@ namespace Castle.DynamicProxy.Internal
 
 		public static void SetStaticField(this Type type, string fieldName, BindingFlags additionalFlags, object value)
 		{
-			var flags = additionalFlags | BindingFlags.Static | BindingFlags.SetField;
+#if CORECLR
+            var flags = additionalFlags | BindingFlags.Static;
+
+            try
+            {
+                FieldInfo toSet = type.GetField(fieldName, flags);
+                toSet.SetValue(type, value);
+            }
+#else
+            var flags = additionalFlags | BindingFlags.Static | BindingFlags.SetField;
 
 			try
 			{
 				type.InvokeMember(fieldName, flags, null, null, new[] { value });
 			}
-			catch (MissingFieldException e)
+#endif
+            catch (MissingFieldException e)
 			{
 				throw new ProxyGenerationException(
 					string.Format(
@@ -176,7 +200,8 @@ namespace Castle.DynamicProxy.Internal
 						fieldName,
 						type), e);
 			}
-			catch (TargetException e)
+#if !CORECLR // doesn't exist  here.
+            catch (TargetException e)
 			{
 				throw new ProxyGenerationException(
 					string.Format(
@@ -184,6 +209,7 @@ namespace Castle.DynamicProxy.Internal
 						fieldName,
 						type), e);
 			}
+#endif
 			catch (TargetInvocationException e) // yes, this is not documented in MSDN. Yay for documentation
 			{
 				if ((e.InnerException is TypeInitializationException) == false)

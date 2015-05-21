@@ -15,9 +15,11 @@
 namespace Castle.DynamicProxy.Generators
 {
 	using System;
-	using System.Runtime.Serialization;
+#if !CORECLR
+    using System.Runtime.Serialization;
 
 	[Serializable]
+#endif
 	public class GeneratorException : Exception
 	{
 		public GeneratorException(string message) : base(message)
@@ -28,7 +30,7 @@ namespace Castle.DynamicProxy.Generators
 		{
 		}
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 		public GeneratorException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}

@@ -59,9 +59,13 @@ namespace Castle.DynamicProxy.Generators
 			ProxyGenerationOptions = options;
 
 			interfaces = TypeUtil.GetAllInterfaces(interfaces);
-			var cacheKey = new CacheKey(proxyTargetType, targetType, interfaces, options);
+#if CORECLR
+            var cacheKey = new CacheKey(proxyTargetType.GetTypeInfo(), targetType, interfaces, options);
+#else
+            var cacheKey = new CacheKey(proxyTargetType, targetType, interfaces, options);
+#endif
 
-			return ObtainProxyType(cacheKey, (n, s) => GenerateType(n, proxyTargetType, interfaces, s));
+            return ObtainProxyType(cacheKey, (n, s) => GenerateType(n, proxyTargetType, interfaces, s));
 		}
 
 		protected virtual ITypeContributor AddMappingForTargetType(IDictionary<Type, ITypeContributor> typeImplementerMapping,
@@ -91,7 +95,7 @@ namespace Castle.DynamicProxy.Generators
 			return contributor;
 		}
 		
-#if (!SILVERLIGHT)
+#if !SILVERLIGHT && !CORECLR
 		protected override void CreateTypeAttributes(ClassEmitter emitter)
 		{
 			base.CreateTypeAttributes(emitter);
@@ -268,8 +272,20 @@ namespace Castle.DynamicProxy.Generators
 				throw new ArgumentException(
 					"Base type for proxy is null reference. Please set it to System.Object or some other valid type.");
 			}
+#if CORECLR
+            if (!type.GetTypeInfo().IsClass)
+            {
+                ThrowInvalidBaseType(type, "it is not a class type");
+            }
 
-			if (!type.IsClass)
+            if (type.GetTypeInfo().IsSealed)
+            {
+                ThrowInvalidBaseType(type, "it is sealed");
+            }
+            // TODO: Does this need rewrite
+            var constructor = type.GetConstructor(Type.EmptyTypes);
+#else
+            if (!type.IsClass)
 			{
 				ThrowInvalidBaseType(type, "it is not a class type");
 			}
@@ -281,8 +297,9 @@ namespace Castle.DynamicProxy.Generators
 
 			var constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
 			                                      null, Type.EmptyTypes, null);
+#endif
 
-			if (constructor == null || constructor.IsPrivate)
+            if (constructor == null || constructor.IsPrivate)
 			{
 				ThrowInvalidBaseType(type, "it does not have accessible parameterless constructor");
 			}

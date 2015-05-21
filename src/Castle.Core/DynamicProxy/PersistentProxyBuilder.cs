@@ -14,7 +14,7 @@
 
 namespace Castle.DynamicProxy
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 	/// <summary>
 	///   ProxyBuilder that persists the generated type.
 	/// </summary>

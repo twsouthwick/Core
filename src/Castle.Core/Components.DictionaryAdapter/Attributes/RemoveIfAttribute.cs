@@ -14,14 +14,16 @@
 
 namespace Castle.Components.DictionaryAdapter
 {
-	using System;
-	using System.Linq;
-	using System.Collections;
+    using System;
+    using System.Linq;
+    using System.Collections;
+    using System.Reflection;
 
-	/// <summary>
-	/// Removes a property if matches value.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
+
+    /// <summary>
+    /// Removes a property if matches value.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
 	public class RemoveIfAttribute : DictionaryBehaviorAttribute, IDictionaryPropertySetter
 	{
 		private ICondition condition;
@@ -76,10 +78,13 @@ namespace Castle.Components.DictionaryAdapter
 			{
 				throw new ArgumentNullException(paramName);
 			}
-
-			if (type.IsAbstract == false && typeof(TBase).IsAssignableFrom(type))
-			{
-				var constructor = type.GetConstructor(Type.EmptyTypes);
+#if CORECLR
+            if (type.GetTypeInfo().IsAbstract == false && typeof(TBase).IsAssignableFrom(type))
+#else
+            if (type.IsAbstract == false && typeof(TBase).IsAssignableFrom(type))
+#endif
+            {
+                var constructor = type.GetConstructor(Type.EmptyTypes);
 				if (constructor != null)
 				{
 					return (TBase)constructor.Invoke(new object[0]);

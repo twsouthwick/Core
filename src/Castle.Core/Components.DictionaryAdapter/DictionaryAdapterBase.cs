@@ -14,11 +14,12 @@
 
 namespace Castle.Components.DictionaryAdapter
 {
-	using System.Collections;
-	using System.ComponentModel;
-	using System.Linq;
+    using System.Collections;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Reflection;
 
-	public abstract partial class DictionaryAdapterBase : IDictionaryAdapter
+    public abstract partial class DictionaryAdapterBase : IDictionaryAdapter
 	{
 		public DictionaryAdapterBase(DictionaryAdapterInstance instance)
 		{
@@ -26,9 +27,12 @@ namespace Castle.Components.DictionaryAdapter
 
 			CanEdit = typeof(IEditableObject).IsAssignableFrom(Meta.Type);
 			CanNotify = typeof(INotifyPropertyChanged).IsAssignableFrom(Meta.Type);
-			CanValidate = typeof(IDataErrorInfo).IsAssignableFrom(Meta.Type);
-
-			Initialize();
+#if CORECLR
+            CanValidate = false; // No IDataErrorInfo in Core 
+#else
+            CanValidate = typeof(IDataErrorInfo).IsAssignableFrom(Meta.Type);
+#endif
+            Initialize();
 		}
 
 		public abstract DictionaryAdapterMeta Meta { get; }

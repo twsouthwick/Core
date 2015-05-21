@@ -53,7 +53,7 @@ namespace Castle.DynamicProxy.Generators
 			// 1. first target, target is not an interface so we do nothing
 			// 2. then mixins - we support none so we do nothing
 			// 3. then additional interfaces - we support none so we do nothing
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			// 4. plus special interfaces
 			if (targetType.IsSerializable)
 			{

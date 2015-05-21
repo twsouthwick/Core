@@ -17,8 +17,10 @@ namespace Castle.Core.Resource
 	using System;
 	using System.Text;
 
+#if !CORECLR
 	[Serializable]
-	public sealed class CustomUri
+#endif
+    public sealed class CustomUri
 	{
 		public static readonly String SchemeDelimiter = "://";
 		public static readonly String UriSchemeFile = "file";

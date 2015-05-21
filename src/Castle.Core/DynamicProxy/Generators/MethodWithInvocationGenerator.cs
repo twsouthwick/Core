@@ -61,9 +61,12 @@ namespace Castle.DynamicProxy.Generators
 		protected override MethodEmitter BuildProxiedMethodBody(MethodEmitter emitter, ClassEmitter @class, ProxyGenerationOptions options, INamingScope namingScope)
 		{
 			var invocationType = invocation;
-
-			Trace.Assert(MethodToOverride.IsGenericMethod == invocationType.IsGenericTypeDefinition);
-			var genericArguments = Type.EmptyTypes;
+#if CORECLR
+            Trace.Assert(MethodToOverride.IsGenericMethod == invocationType.GetTypeInfo().IsGenericTypeDefinition);
+#else
+            Trace.Assert(MethodToOverride.IsGenericMethod == invocationType.IsGenericTypeDefinition);
+#endif
+            var genericArguments = Type.EmptyTypes;
 
 			var constructor = invocation.GetConstructors()[0];
 

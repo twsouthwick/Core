@@ -54,7 +54,7 @@ namespace Castle.DynamicProxy.Internal
 			disassemblers[typeof(TAttribute)] = disassembler;
 		}
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 		public static CustomAttributeBuilder CreateBuilder(CustomAttributeData attribute)
 		{
 			Debug.Assert(attribute != null, "attribute != null");

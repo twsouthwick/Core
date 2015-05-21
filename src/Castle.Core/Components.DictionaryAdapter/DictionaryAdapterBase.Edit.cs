@@ -14,12 +14,13 @@
 
 namespace Castle.Components.DictionaryAdapter
 {
-	using System;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Reflection;
 
-	public abstract partial class DictionaryAdapterBase
+    public abstract partial class DictionaryAdapterBase
 	{
 		private int suppressEditingCount = 0;
 		private Stack<Dictionary<string, Edit>> updates;

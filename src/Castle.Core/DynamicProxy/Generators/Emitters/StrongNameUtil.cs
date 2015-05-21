@@ -18,7 +18,7 @@ namespace Castle.DynamicProxy.Generators.Emitters
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Reflection;
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 	using System.Security;
 	using System.Security.Permissions;
 #endif
@@ -34,7 +34,7 @@ namespace Castle.DynamicProxy.Generators.Emitters
 #endif
 		static StrongNameUtil()
 		{
-#if SILVERLIGHT
+#if SILVERLIGHT || CORECLR
 			CanStrongNameAssembly = true;
 #else
 			//idea after http://blogs.msdn.com/dmitryr/archive/2007/01/23/finding-out-the-current-trust-level-in-asp-net.aspx
@@ -72,13 +72,21 @@ namespace Castle.DynamicProxy.Generators.Emitters
 
 		public static bool IsAnyTypeFromUnsignedAssembly(IEnumerable<Type> types)
 		{
-			return types.Any(t => t.Assembly.IsAssemblySigned() == false);
-		}
+#if CORECLR
+            return types.Any(t => t.GetTypeInfo().Assembly.IsAssemblySigned() == false);
+#else
+            return types.Any(t => t.Assembly.IsAssemblySigned() == false);
+#endif
+        }
 
 		public static bool IsAnyTypeFromUnsignedAssembly(Type baseType, IEnumerable<Type> interfaces)
 		{
+#if CORECLR
+            if (baseType != null && baseType.GetTypeInfo().Assembly.IsAssemblySigned() == false)
+#else
 			if (baseType != null && baseType.Assembly.IsAssemblySigned() == false)
-			{
+#endif
+            {
 				return true;
 			}
 

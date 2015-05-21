@@ -14,9 +14,10 @@
 
 namespace Castle.Components.DictionaryAdapter
 {
-	using System;
+    using System;
+    using System.Reflection;
 
-	public abstract partial class DictionaryAdapterBase
+    public abstract partial class DictionaryAdapterBase
 	{
 		public T Coerce<T>() where T : class
 		{
@@ -25,8 +26,8 @@ namespace Castle.Components.DictionaryAdapter
 
 		public object Coerce(Type type)
 		{
-			if (type.IsAssignableFrom(Meta.Type))
-				return this;
+            if (type.IsAssignableFrom(Meta.Type))
+                return this;
 
 			if (This.CoerceStrategy != null)
 			{

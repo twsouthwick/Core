@@ -14,7 +14,9 @@
 
 namespace Castle.Components.DictionaryAdapter
 {
-	using System.ComponentModel;
+    using System.ComponentModel;
+    using System.Reflection;
+
 
     /// <summary>
     /// Manages conversion between property values.

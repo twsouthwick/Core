@@ -24,6 +24,7 @@ namespace Castle.Core.Internal
 	/// </summary>
 	public static class AttributesUtil
 	{
+#if !CORECLR  // TODO: Is this useful without ICustomAttributeProvider?
 		/// <summary>
 		///   Gets the attribute.
 		/// </summary>
@@ -48,16 +49,16 @@ namespace Castle.Core.Internal
 			return (T[])member.GetCustomAttributes(false);
 		}
 
-		/// <summary>
+        /// <summary>
 		///   Gets the type attribute.
 		/// </summary>
 		/// <param name = "type">The type.</param>
 		/// <returns>The type attribute.</returns>
 		public static T GetTypeAttribute<T>(this Type type) where T : class
 		{
-			var attribute = GetAttribute<T>(type);
+            var attribute = GetAttribute<T>(type);
 
-			if (attribute == null)
+            if (attribute == null)
 			{
 				foreach (var baseInterface in type.GetInterfaces())
 				{
@@ -139,4 +140,5 @@ namespace Castle.Core.Internal
 			return GetAttributes<T>(member).FirstOrDefault() != null;
 		}
 	}
-}
+#endif
+    }

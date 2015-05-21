@@ -16,7 +16,7 @@ namespace Castle.DynamicProxy
 {
 	using System;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || CORECLR
 	public class StandardInterceptor : IInterceptor
 #else
 	[Serializable]

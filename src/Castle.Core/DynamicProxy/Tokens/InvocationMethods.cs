@@ -24,8 +24,18 @@ namespace Castle.DynamicProxy.Tokens
 	/// </summary>
 	public static class InvocationMethods
 	{
-		public static readonly ConstructorInfo CompositionInvocationConstructor =
-			typeof(CompositionInvocation).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
+        public static readonly ConstructorInfo CompositionInvocationConstructor = typeof(CompositionInvocation).
+#if CORECLR
+            GetConstructor(new[]
+                        {
+                            typeof(object),
+                            typeof(object),
+                            typeof(IInterceptor[]),
+                            typeof(MethodInfo),
+                            typeof(object[])
+                        });
+#else
+            GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
 			                                             new[]
 			                                             {
 			                                             	typeof(object),
@@ -35,8 +45,8 @@ namespace Castle.DynamicProxy.Tokens
 			                                             	typeof(object[])
 			                                             },
 			                                             null);
-
-		public static readonly MethodInfo EnsureValidTarget =
+#endif
+        public static readonly MethodInfo EnsureValidTarget =
 			typeof(CompositionInvocation).GetMethod("EnsureValidTarget", BindingFlags.Instance | BindingFlags.NonPublic);
 
 		public static readonly MethodInfo GetArgumentValue =
@@ -48,8 +58,19 @@ namespace Castle.DynamicProxy.Tokens
 		public static readonly MethodInfo GetReturnValue =
 			typeof(AbstractInvocation).GetMethod("get_ReturnValue");
 
-		public static readonly ConstructorInfo InheritanceInvocationConstructor =
-			typeof(InheritanceInvocation).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
+        public static readonly ConstructorInfo InheritanceInvocationConstructor =
+            typeof(InheritanceInvocation).
+#if CORECLR
+            GetConstructor(new[]
+                            {
+                                typeof(Type),
+                                typeof(object),
+                                typeof(IInterceptor[]),
+                                typeof(MethodInfo),
+                                typeof(object[])
+                            });
+#else
+            GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
 			                                             new[]
 			                                             {
 			                                             	typeof(Type),
@@ -59,9 +80,23 @@ namespace Castle.DynamicProxy.Tokens
 			                                             	typeof(object[])
 			                                             },
 			                                             null);
-
-		public static readonly ConstructorInfo InheritanceInvocationConstructorWithSelector =
-			typeof(InheritanceInvocation).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
+#endif
+        public static readonly ConstructorInfo InheritanceInvocationConstructorWithSelector =
+			typeof(InheritanceInvocation).
+#if CORECLR
+            GetConstructor(new[]
+                            {
+                                typeof(Type),
+                                typeof(object),
+                                typeof(IInterceptor[]),
+                                typeof(MethodInfo),
+                                typeof(object[]),
+                                typeof(IInterceptorSelector),
+                                typeof(IInterceptor[]).MakeByRefType()
+                            });
+#else
+           
+            GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
 			                                             new[]
 			                                             {
 			                                             	typeof(Type),
@@ -73,6 +108,7 @@ namespace Castle.DynamicProxy.Tokens
 			                                             	typeof(IInterceptor[]).MakeByRefType()
 			                                             },
 			                                             null);
+#endif
 
 		public static readonly MethodInfo Proceed =
 			typeof(AbstractInvocation).GetMethod("Proceed", BindingFlags.Instance | BindingFlags.Public);

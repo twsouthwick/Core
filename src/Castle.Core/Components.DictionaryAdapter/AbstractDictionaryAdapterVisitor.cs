@@ -14,17 +14,19 @@
 
 namespace Castle.Components.DictionaryAdapter
 {
-	using System;
-	using System.Linq;
-	using System.Collections;
-	using System.Collections.Generic;
+    using System;
+    using System.Linq;
+    using System.Collections;
+    using System.Collections.Generic;
 
-	using Castle.Core;
+    using Castle.Core;
+    using System.Reflection;
 
-	/// <summary>
-	/// Abstract implementation of <see cref="IDictionaryAdapterVisitor"/>.
-	/// </summary>
-	public abstract class AbstractDictionaryAdapterVisitor : IDictionaryAdapterVisitor
+
+    /// <summary>
+    /// Abstract implementation of <see cref="IDictionaryAdapterVisitor"/>.
+    /// </summary>
+    public abstract class AbstractDictionaryAdapterVisitor : IDictionaryAdapterVisitor
 	{
 		private readonly Dictionary<IDictionaryAdapter, int> scopes;
 
@@ -68,9 +70,13 @@ namespace Castle.Components.DictionaryAdapter
 					{
 						VisitCollection(dictionaryAdapter, property, collectionItemType, state);
 					}
-					else if (property.PropertyType.IsInterface)
-					{
-						VisitInterface(dictionaryAdapter, property, state);
+#if CORECLR
+                    else if (property.PropertyType.DeclaringType.GetTypeInfo().IsInterface) // TODO: Correctness check
+#else
+                    else if (property.PropertyType.IsInterface)
+#endif
+                    {
+                        VisitInterface(dictionaryAdapter, property, state);
 					}
 					else
 					{
@@ -141,9 +147,13 @@ namespace Castle.Components.DictionaryAdapter
 				{
 					collectionItemType = propertyType.GetElementType();
 				}
-				else if (propertyType.IsGenericType)
-				{
-					var arguments = propertyType.GetGenericArguments();
+#if CORECLR
+                else if (propertyType.GetTypeInfo().IsGenericType)
+#else
+                else if (propertyType.IsGenericType)
+#endif
+                {
+                    var arguments = propertyType.GetGenericArguments();
 					collectionItemType = arguments[0];
 				}
 				else

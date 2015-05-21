@@ -62,7 +62,7 @@ namespace Castle.Components.DictionaryAdapter
 		/// </remarks>
 		object GetAdapter(Type type, IDictionary dictionary, PropertyDescriptor descriptor);
 		
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 		/// <summary>
 		/// Gets a typed adapter bound to the <see cref="NameValueCollection"/>.
 		/// </summary>

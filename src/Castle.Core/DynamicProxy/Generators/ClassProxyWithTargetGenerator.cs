@@ -47,8 +47,12 @@ namespace Castle.DynamicProxy.Generators
 
 		public Type GetGeneratedType()
 		{
-			var cacheKey = new CacheKey(targetType, targetType, additionalInterfacesToProxy, ProxyGenerationOptions);
-			return ObtainProxyType(cacheKey, GenerateType);
+#if CORECLR
+            var cacheKey = new CacheKey(targetType.GetTypeInfo(), targetType, additionalInterfacesToProxy, ProxyGenerationOptions);
+#else
+            var cacheKey = new CacheKey(targetType, targetType, additionalInterfacesToProxy, ProxyGenerationOptions);
+#endif
+            return ObtainProxyType(cacheKey, GenerateType);
 		}
 
 		protected virtual IEnumerable<Type> GetTypeImplementerMapping(out IEnumerable<ITypeContributor> contributors,
@@ -118,7 +122,7 @@ namespace Castle.DynamicProxy.Generators
 					AddMapping(@interface, additionalInterfacesContributor, typeImplementerMapping);
 				}
 			}
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 			// 4. plus special interfaces
 			if (targetType.IsSerializable)
 			{
