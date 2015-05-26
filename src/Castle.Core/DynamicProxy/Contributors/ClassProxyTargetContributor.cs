@@ -162,9 +162,13 @@ namespace Castle.DynamicProxy.Contributors
 
 		private IInvocationCreationContributor GetContributor(Type @delegate, MetaMethod method)
 		{
-			if (@delegate.IsGenericType == false)
-			{
-				return new InvocationWithDelegateContributor(@delegate, targetType, method, namingScope);
+#if CORECLR
+            if (@delegate.GetTypeInfo().IsGenericType == false)
+#else
+            if (@delegate.IsGenericType == false)
+#endif
+            {
+                return new InvocationWithDelegateContributor(@delegate, targetType, method, namingScope);
 			}
 			return new InvocationWithGenericDelegateContributor(@delegate,
 			                                                    method,
@@ -175,8 +179,12 @@ namespace Castle.DynamicProxy.Contributors
 		{
 			var scope = @class.ModuleScope;
 			var key = new CacheKey(
-				typeof(Delegate),
-				targetType,
+#if CORECLR
+                typeof(Delegate).GetTypeInfo(),
+#else
+                typeof(Delegate),
+#endif
+                targetType,
 				new[] { method.MethodOnTarget.ReturnType }
 					.Concat(ArgumentsUtil.GetTypes(method.MethodOnTarget.GetParameters())).
 					ToArray(),

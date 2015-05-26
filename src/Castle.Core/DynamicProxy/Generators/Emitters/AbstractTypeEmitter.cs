@@ -283,9 +283,12 @@ namespace Castle.DynamicProxy.Generators.Emitters
 		public Type GetGenericArgument(String genericArgumentName)
 		{
 			if (name2GenericType.ContainsKey(genericArgumentName))
-				return name2GenericType[genericArgumentName];
-
-			return null;
+#if CORECLR
+                return name2GenericType[genericArgumentName].AsType();
+#else
+                return name2GenericType[genericArgumentName];
+#endif
+            return null;
 		}
 
 		public Type[] GetGenericArgumentsFor(Type genericType)
@@ -296,9 +299,13 @@ namespace Castle.DynamicProxy.Generators.Emitters
 			{
 				if (genType.IsGenericParameter)
 				{
-					types.Add(name2GenericType[genType.Name]);
-				}
-				else
+#if CORECLR
+                    types.Add(name2GenericType[genType.Name].AsType());
+#else
+                    types.Add(name2GenericType[genType.Name]);
+#endif
+                }
+                else
 				{
 					types.Add(genType);
 				}
@@ -312,10 +319,14 @@ namespace Castle.DynamicProxy.Generators.Emitters
 			var types = new List<Type>();
 			foreach (var genType in genericMethod.GetGenericArguments())
 			{
-				types.Add(name2GenericType[genType.Name]);
-			}
+#if CORECLR
+                types.Add(name2GenericType[genType.Name].AsType());
+#else
+                types.Add(name2GenericType[genType.Name]);
+#endif
+            }
 
-			return types.ToArray();
+            return types.ToArray();
 		}
 
 		public void SetGenericTypeParameters(GenericTypeParameterBuilder[] genericTypeParameterBuilders)
@@ -327,9 +338,13 @@ namespace Castle.DynamicProxy.Generators.Emitters
 		{
 			try
 			{
-				return type.CreateType();
-			}
-			catch (BadImageFormatException ex)
+#if CORECLR
+                return type.AsType(); // TODO: Figure out correct replacement API when this builds.
+#else
+                return type.CreateType();
+#endif
+            }
+            catch (BadImageFormatException ex)
 			{
 				if (Debugger.IsAttached == false)
 				{

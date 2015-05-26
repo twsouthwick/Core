@@ -119,9 +119,13 @@ namespace Castle.DynamicProxy
 
 		private void AssertValidTypeForTarget(Type type, Type target)
 		{
-			if (type.IsGenericTypeDefinition)
-			{
-				throw new GeneratorException(string.Format("Can not create proxy for type {0} because type {1} is an open generic type.",
+#if CORECLR
+            if (type.GetTypeInfo().IsGenericTypeDefinition)
+#else
+            if (type.IsGenericTypeDefinition)
+#endif
+            {
+                throw new GeneratorException(string.Format("Can not create proxy for type {0} because type {1} is an open generic type.",
 															target.GetBestName(), type.GetBestName()));
 			}
 			if (IsPublic(type) == false && IsAccessible(type) == false)
@@ -147,21 +151,34 @@ namespace Castle.DynamicProxy
 
 		private bool IsAccessible(Type target)
 		{
-			return IsInternal(target) && target.Assembly.IsInternalToDynamicProxy();
-		}
+#if CORECLR
+            return IsInternal(target) && target.GetTypeInfo().Assembly.IsInternalToDynamicProxy();
+#else
+            return IsInternal(target) && target.Assembly.IsInternalToDynamicProxy();
+#endif
+        }
 
-		private bool IsPublic(Type target)
+        private bool IsPublic(Type target)
 		{
-			return target.IsPublic || target.IsNestedPublic;
-		}
+#if CORECLR
+            return target.GetTypeInfo().IsPublic || target.GetTypeInfo().IsNestedPublic;
+#else
+            return target.IsPublic || target.IsNestedPublic;
+#endif
+        }
 
-		private static bool IsInternal(Type target)
+        private static bool IsInternal(Type target)
 		{
 			var isTargetNested = target.IsNested;
-			var isNestedAndInternal = isTargetNested && (target.IsNestedAssembly || target.IsNestedFamORAssem);
+#if CORECLR
+            var isNestedAndInternal = isTargetNested && (target.GetTypeInfo().IsNestedAssembly || target.GetTypeInfo().IsNestedFamORAssem);
+            var isInternalNotNested = target.GetTypeInfo().IsVisible == false && isTargetNested == false;
+#else
+            var isNestedAndInternal = isTargetNested && (target.IsNestedAssembly || target.IsNestedFamORAssem);
 			var isInternalNotNested = target.IsVisible == false && isTargetNested == false;
+#endif
 
-			return isInternalNotNested || isNestedAndInternal;
+            return isInternalNotNested || isNestedAndInternal;
 		}
 	}
 }

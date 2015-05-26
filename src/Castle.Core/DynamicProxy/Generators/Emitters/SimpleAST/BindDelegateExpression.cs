@@ -14,11 +14,12 @@
 
 namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-	using System;
-	using System.Reflection;
-	using System.Reflection.Emit;
+    using Castle.DynamicProxy.Internal;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-	public class BindDelegateExpression : Expression
+    public class BindDelegateExpression : Expression
 	{
 		private readonly ConstructorInfo delegateCtor;
 		private readonly MethodInfo methodToBindTo;
@@ -29,13 +30,24 @@ namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 		{
 			delegateCtor = @delegate.GetConstructors()[0];
 			this.methodToBindTo = methodToBindTo;
-			if (@delegate.IsGenericTypeDefinition)
-			{
-				var closedDelegate = @delegate.MakeGenericType(genericTypeParams);
+#if CORECLR
+            if (@delegate.GetTypeInfo().IsGenericTypeDefinition)
+#else
+            if (@delegate.IsGenericTypeDefinition)
+#endif
+            {
+#if CORECLR
+                var genericTypeParameters = genericTypeParams.AsTypeArray();
+                var closedDelegate = @delegate.MakeGenericType(genericTypeParameters);
+                delegateCtor = TypeBuilder.GetConstructor(closedDelegate, delegateCtor);
+                this.methodToBindTo = methodToBindTo.MakeGenericMethod(genericTypeParameters);
+#else
+                var closedDelegate = @delegate.MakeGenericType(genericTypeParams);
 				delegateCtor = TypeBuilder.GetConstructor(closedDelegate, delegateCtor);
 				this.methodToBindTo = methodToBindTo.MakeGenericMethod(genericTypeParams);
-			}
-			this.owner = owner;
+#endif
+            }
+            this.owner = owner;
 		}
 
 		public override void Emit(IMemberEmitter member, ILGenerator gen)

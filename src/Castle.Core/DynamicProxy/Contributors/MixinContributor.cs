@@ -14,15 +14,16 @@
 
 namespace Castle.DynamicProxy.Contributors
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
 
-	using Castle.DynamicProxy.Generators;
-	using Castle.DynamicProxy.Generators.Emitters;
-	using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    using System.Reflection;
 
-	public class MixinContributor : CompositeTypeContributor
+    public class MixinContributor : CompositeTypeContributor
 	{
 		private readonly bool canChangeTarget;
 		private readonly IList<Type> empty = new List<Type>();
@@ -44,8 +45,12 @@ namespace Castle.DynamicProxy.Contributors
 		public void AddEmptyInterface(Type @interface)
 		{
 			Debug.Assert(@interface != null, "@interface == null", "Shouldn't be adding empty interfaces...");
-			Debug.Assert(@interface.IsInterface, "@interface.IsInterface", "Should be adding interfaces only...");
-			Debug.Assert(!interfaces.Contains(@interface), "!interfaces.Contains(@interface)",
+#if CORECLR
+            Debug.Assert(@interface.GetTypeInfo().IsInterface, "@interface.IsInterface", "Should be adding interfaces only...");
+#else
+            Debug.Assert(@interface.IsInterface, "@interface.IsInterface", "Should be adding interfaces only...");
+#endif
+            Debug.Assert(!interfaces.Contains(@interface), "!interfaces.Contains(@interface)",
 			             "Shouldn't be adding same interface twice...");
 			Debug.Assert(!empty.Contains(@interface), "!empty.Contains(@interface)",
 			             "Shouldn't be adding same interface twice...");

@@ -223,7 +223,7 @@ namespace Castle.DynamicProxy.Internal
 			}
 		}
 
-		public static MemberInfo[] Sort(MemberInfo[] members)
+        public static MemberInfo[] Sort(MemberInfo[] members)
 		{
 			var sortedMembers = new MemberInfo[members.Length];
 			Array.Copy(members, sortedMembers, members.Length);
@@ -254,5 +254,18 @@ namespace Castle.DynamicProxy.Internal
 			Array.Sort(array, (l, r) => string.Compare(l.AssemblyQualifiedName, r.AssemblyQualifiedName, StringComparison.OrdinalIgnoreCase));
 			return array;
 		}
-	}
+
+#if CORECLR
+        public static Type[] AsTypeArray(this TypeInfo[] typeInfos)
+        {
+            Type[] types = new Type[typeInfos.Length];
+            for (int i = 0; i < types.Length; i++)
+            {
+                types[i] = typeInfos[i].AsType();
+            }
+            return types;
+        }
+#endif
+
+    }
 }

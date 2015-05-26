@@ -14,11 +14,12 @@
 
 namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-	using System;
-	using System.Diagnostics;
-	using System.Reflection.Emit;
+    using System;
+    using System.Diagnostics;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-	[DebuggerDisplay("{value}")]
+    [DebuggerDisplay("{value}")]
 	public class ConstReference : TypeReference
 	{
 		private readonly object value;
@@ -26,9 +27,13 @@ namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 		public ConstReference(object value)
 			: base(value.GetType())
 		{
-			if (!value.GetType().IsPrimitive && !(value is String))
-			{
-				throw new ProxyGenerationException("Invalid type to ConstReference");
+#if CORECLR
+            if (!value.GetType().GetTypeInfo().IsPrimitive && !(value is String))
+#else
+            if (!value.GetType().IsPrimitive && !(value is String))
+#endif
+            {
+                throw new ProxyGenerationException("Invalid type to ConstReference");
 			}
 
 			this.value = value;

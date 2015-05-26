@@ -14,10 +14,11 @@
 
 namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-	using System;
-	using System.Reflection.Emit;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-	public class DefaultValueExpression : Expression
+    public class DefaultValueExpression : Expression
 	{
 		private readonly Type type;
 
@@ -33,10 +34,14 @@ namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 			{
 				OpCodeUtil.EmitLoadOpCodeForDefaultValueOfType(gen, type);
 			}
-			else if (type.IsValueType || type.IsGenericParameter)
-			{
-				// TODO: handle decimal explicitly
-				var local = gen.DeclareLocal(type);
+#if CORECLR
+            else if (type.GetTypeInfo().IsValueType || type.IsGenericParameter)
+#else
+            else if (type.IsValueType || type.IsGenericParameter)
+#endif
+            {
+                // TODO: handle decimal explicitly
+                var local = gen.DeclareLocal(type);
 				gen.Emit(OpCodes.Ldloca_S, local);
 				gen.Emit(OpCodes.Initobj, type);
 				gen.Emit(OpCodes.Ldloc, local);
@@ -59,9 +64,13 @@ namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 				OpCodeUtil.EmitLoadOpCodeForDefaultValueOfType(gen, elementType);
 				OpCodeUtil.EmitStoreIndirectOpCodeForType(gen, elementType);
 			}
-			else if (elementType.IsGenericParameter || elementType.IsValueType)
-			{
-				gen.Emit(OpCodes.Initobj, elementType);
+#if CORECLR
+            else if (elementType.IsGenericParameter || elementType.GetTypeInfo().IsValueType)
+#else
+            else if (elementType.IsGenericParameter || elementType.IsValueType)
+#endif
+            {
+                gen.Emit(OpCodes.Initobj, elementType);
 			}
 			else
 			{
@@ -71,13 +80,24 @@ namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 
 		private bool IsPrimitiveOrClass(Type type)
 		{
-			if ((type.IsPrimitive && type != typeof(IntPtr)))
+#if CORECLR
+            if ((type.GetTypeInfo().IsPrimitive && type != typeof(IntPtr)))
+            {
+                return true;
+            }
+            return ((type.GetTypeInfo().IsClass || type.GetTypeInfo().IsInterface) &&
+                    type.IsGenericParameter == false &&
+                    type.IsByRef == false);
+
+#else
+            if ((type.IsPrimitive && type != typeof(IntPtr)))
 			{
 				return true;
 			}
 			return ((type.IsClass || type.IsInterface) &&
 			        type.IsGenericParameter == false &&
 			        type.IsByRef == false);
-		}
-	}
+#endif
+        }
+    }
 }

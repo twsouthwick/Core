@@ -242,9 +242,13 @@ namespace Castle.Components.DictionaryAdapter
 				implementation,
 				"__Create"
 			);
-		
-			var meta = new DictionaryAdapterMeta(type, implementation, typeBehaviors,
-				initializers.MetaInitializers.ToArray(), initializers.Initializers.ToArray(),
+
+#if CORECLR
+            var meta = new DictionaryAdapterMeta(type, implementation.AsType(), typeBehaviors,
+#else
+            var meta = new DictionaryAdapterMeta(type, implementation, typeBehaviors,
+#endif
+            initializers.MetaInitializers.ToArray(), initializers.Initializers.ToArray(),
 				propertyMap, this, creator);
 
 			const BindingFlags metaBindings = BindingFlags.Public | BindingFlags.Static | BindingFlags.SetField;
@@ -411,9 +415,14 @@ namespace Castle.Components.DictionaryAdapter
 			PreparePropertyMethod(descriptor, setILGenerator);
 
 			setILGenerator.Emit(OpCodes.Ldarg_1);
-			if (descriptor.PropertyType.IsValueType)
-			{
-				setILGenerator.Emit(OpCodes.Box, descriptor.PropertyType);
+
+#if CORECLR
+            if (descriptor.PropertyType.GetTypeInfo().IsValueType)
+#else
+            if (descriptor.PropertyType.IsValueType)
+#endif
+            {
+                setILGenerator.Emit(OpCodes.Box, descriptor.PropertyType);
 			}
 			setILGenerator.Emit(OpCodes.Stloc_1);
 

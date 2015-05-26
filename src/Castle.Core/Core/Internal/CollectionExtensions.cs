@@ -25,10 +25,10 @@ namespace Castle.Core.Internal
 	{
 		public static TResult[] ConvertAll<T, TResult>(this T[] items, Converter<T, TResult> transformation)
 		{
-#if SILVERLIGHT
+#if SILVERLIGHT || CORECLR
 			return items.Select(transformation.Invoke).ToArray();
 #else
-			return Array.ConvertAll(items, transformation);
+            return Array.ConvertAll(items, transformation);
 #endif
 		}
 

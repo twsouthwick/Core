@@ -14,12 +14,13 @@
 
 namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-	using System;
-	using System.Reflection.Emit;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-	/// <summary>
-	/// </summary>
-	public class ReferencesToObjectArrayExpression : Expression
+    /// <summary>
+    /// </summary>
+    public class ReferencesToObjectArrayExpression : Expression
 	{
 		private readonly TypeReference[] args;
 
@@ -49,12 +50,18 @@ namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 				{
 					throw new NotSupportedException();
 				}
-
-				if (reference.Type.IsValueType)
+#if CORECLR
+                if (reference.Type.GetTypeInfo().IsValueType)
+                {
+                    gen.Emit(OpCodes.Box, reference.Type); // TODO: Core doesn't define UnderlyingSystemType. This is likely very wrong, fix using debugger when it builds.
+                }
+#else
+                if (reference.Type.IsValueType)
 				{
 					gen.Emit(OpCodes.Box, reference.Type.UnderlyingSystemType);
 				}
-				else if (reference.Type.IsGenericParameter)
+#endif
+                else if (reference.Type.IsGenericParameter)
 				{
 					gen.Emit(OpCodes.Box, reference.Type);
 				}

@@ -33,8 +33,12 @@ namespace Castle.DynamicProxy.Contributors
 		public InvocationWithDelegateContributor(Type delegateType, Type targetType, MetaMethod method,
 		                                         INamingScope namingScope)
 		{
-			Debug.Assert(delegateType.IsGenericType == false, "delegateType.IsGenericType == false");
-			this.delegateType = delegateType;
+#if CORECLR
+            Debug.Assert(delegateType.GetTypeInfo().IsGenericType == false, "delegateType.IsGenericType == false");
+#else
+            Debug.Assert(delegateType.IsGenericType == false, "delegateType.IsGenericType == false");
+#endif
+            this.delegateType = delegateType;
 			this.targetType = targetType;
 			this.method = method;
 			this.namingScope = namingScope;

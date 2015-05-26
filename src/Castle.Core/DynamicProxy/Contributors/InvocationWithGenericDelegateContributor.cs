@@ -14,16 +14,17 @@
 
 namespace Castle.DynamicProxy.Contributors
 {
-	using System;
-	using System.Diagnostics;
-	using System.Reflection;
+    using System;
+    using System.Diagnostics;
+    using System.Reflection;
 
-	using Castle.DynamicProxy.Generators;
-	using Castle.DynamicProxy.Generators.Emitters;
-	using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-	using Castle.DynamicProxy.Tokens;
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    using Castle.DynamicProxy.Tokens;
+    using Castle.DynamicProxy.Internal;
 
-	public class InvocationWithGenericDelegateContributor : IInvocationCreationContributor
+    public class InvocationWithGenericDelegateContributor : IInvocationCreationContributor
 	{
 		private readonly Type delegateType;
 		private readonly MetaMethod method;
@@ -31,8 +32,12 @@ namespace Castle.DynamicProxy.Contributors
 
 		public InvocationWithGenericDelegateContributor(Type delegateType, MetaMethod method, Reference targetReference)
 		{
-			Debug.Assert(delegateType.IsGenericType, "delegateType.IsGenericType");
-			this.delegateType = delegateType;
+#if CORECLR
+            Debug.Assert(delegateType.GetTypeInfo().IsGenericType, "delegateType.IsGenericType");
+#else
+            Debug.Assert(delegateType.IsGenericType, "delegateType.IsGenericType");
+#endif
+            this.delegateType = delegateType;
 			this.method = method;
 			this.targetReference = targetReference;
 		}
@@ -62,10 +67,17 @@ namespace Castle.DynamicProxy.Contributors
 
 		private Reference GetDelegate(AbstractTypeEmitter invocation, MethodEmitter invokeMethodOnTarget)
 		{
-			var closedDelegateType = delegateType.MakeGenericType(invocation.GenericTypeParams);
+#if CORECLR
+            var genericTypeParameters = invocation.GenericTypeParams.AsTypeArray();
+            var closedDelegateType = delegateType.MakeGenericType(genericTypeParameters);
+            var localReference = invokeMethodOnTarget.CodeBuilder.DeclareLocal(closedDelegateType);
+            var closedMethodOnTarget = method.MethodOnTarget.MakeGenericMethod(genericTypeParameters);
+#else
+            var closedDelegateType = delegateType.MakeGenericType(invocation.GenericTypeParams);
 			var localReference = invokeMethodOnTarget.CodeBuilder.DeclareLocal(closedDelegateType);
 			var closedMethodOnTarget = method.MethodOnTarget.MakeGenericMethod(invocation.GenericTypeParams);
-			var localTarget = new ReferenceExpression(targetReference);
+#endif
+            var localTarget = new ReferenceExpression(targetReference);
 			invokeMethodOnTarget.CodeBuilder.AddStatement(
 				SetDelegate(localReference, localTarget, closedDelegateType, closedMethodOnTarget));
 			return localReference;

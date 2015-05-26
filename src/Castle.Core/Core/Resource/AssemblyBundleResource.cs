@@ -58,8 +58,12 @@ namespace Castle.Core.Resource
 
 		private static Assembly ObtainAssembly(string assemblyName)
 		{
-			try
-			{
+#if CORECLR
+            // TODO:  Could add support for DI of IAssemblyLoadContext for users running in Dnx.
+            throw new NotImplementedException("Assembly.Load(string) is not supported in CoreCLR"); 
+#else
+            try
+            {
 				return Assembly.Load(assemblyName);
 			}
 			catch (Exception ex)
@@ -67,6 +71,7 @@ namespace Castle.Core.Resource
 				var message = String.Format(CultureInfo.InvariantCulture, "The assembly {0} could not be loaded", assemblyName);
 				throw new ResourceException(message, ex);
 			}
-		}
-	}
+#endif
+        }
+    }
 }
