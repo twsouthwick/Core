@@ -28,7 +28,7 @@ namespace Castle.DynamicProxy.Contributors
 
 	public class ClassProxyInstanceContributor : ProxyInstanceContributor
 	{
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !CORECLR
 		private readonly bool delegateToBaseGetObjectData;
 		private readonly bool implementISerializable;
 		private ConstructorInfo serializationConstructor;

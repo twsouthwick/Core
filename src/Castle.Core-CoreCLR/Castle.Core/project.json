@@ -6,9 +6,9 @@
     "projectUrl": "http://www.castleproject.org/",
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
 
+    
 
-
-    "code": [
+    "compile": [
         "../../Castle.Core/Components.DictionaryAdapter/*.cs",
         "../../Castle.Core/Components.DictionaryAdapter/Attributes/*.cs",
         "../../Castle.Core/Components.DictionaryAdapter/Util/*.cs",

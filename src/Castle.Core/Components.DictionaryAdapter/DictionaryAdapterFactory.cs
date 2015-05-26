@@ -160,11 +160,12 @@ namespace Castle.Components.DictionaryAdapter
                     var appDomain = Thread.GetDomain();
 					var typeBuilder = CreateTypeBuilder(type, appDomain);
                     meta = CreateAdapterMeta(type, typeBuilder, descriptor);
-#endif
+                    
                     interfaceToMeta.Add(type, meta);
-					return meta;
-				}
-			}
+                    return meta;
+#endif
+                }
+            }
 		}
 
 		private object InternalGetAdapter(Type type, IDictionary dictionary, PropertyDescriptor descriptor)

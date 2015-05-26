@@ -18,7 +18,6 @@ namespace Castle.Core.Logging
 	using System;
 	using System.Diagnostics;
 	using System.Collections.Generic;
-    using System.Diagnostics;
 #if DOTNET40
 	using System.Security;
 #endif

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#pragma warning disable 3001
+
 namespace Castle.DynamicProxy
 {
 	using System;
@@ -1621,4 +1623,5 @@ namespace Castle.DynamicProxy
 			return ProxyBuilder.CreateClassProxyTypeWithTarget(classToProxy, additionalInterfacesToProxy, options);
 		}
 	}
+#pragma warning restore 3001
 }
