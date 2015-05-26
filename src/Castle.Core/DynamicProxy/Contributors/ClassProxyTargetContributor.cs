@@ -14,19 +14,20 @@
 
 namespace Castle.DynamicProxy.Contributors
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using System.Reflection;
-	using System.Reflection.Emit;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-	using Castle.DynamicProxy.Generators;
-	using Castle.DynamicProxy.Generators.Emitters;
-	using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-	using Castle.DynamicProxy.Tokens;
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    using Castle.DynamicProxy.Tokens;
+    using Castle.DynamicProxy.Internal;
 
-	public class ClassProxyTargetContributor : CompositeTypeContributor
+    public class ClassProxyTargetContributor : CompositeTypeContributor
 	{
 		private readonly IList<MethodInfo> methodsToSkip;
 		private readonly Type targetType;
@@ -118,7 +119,7 @@ namespace Castle.DynamicProxy.Contributors
 
 			if (targetMethod.IsGenericMethod)
 			{
-				targetMethod = targetMethod.MakeGenericMethod(callBackMethod.GenericTypeParams);
+				targetMethod = targetMethod.MakeGenericMethod(callBackMethod.GenericTypeParams.AsTypeArray());
 			}
 
 			var exps = new Expression[callBackMethod.Arguments.Length];

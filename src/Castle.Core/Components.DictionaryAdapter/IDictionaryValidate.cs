@@ -14,14 +14,22 @@
 
 namespace Castle.Components.DictionaryAdapter
 {
-	using System.Collections.Generic;
+// IDataErrorInfo  is not defined in CoreCLR
+
+    using System.Collections.Generic;
 	using System.ComponentModel;
 
-	/// <summary>
-	/// Contract for validating Dictionary adapter.
-	/// </summary>
-	public interface IDictionaryValidate : IDataErrorInfo
-	{
+    /// <summary>
+    /// Contract for validating Dictionary adapter.
+    /// </summary>
+#if CORECLR
+    // TODO:  IDataErrorInfo is gone in CoreCLR and unlikely to come back.
+    //        Figure out if we need to remove this interface or provide a version that doesn't extend IDataErrorInfo.
+    public interface IDictionaryValidate
+#else
+    public interface IDictionaryValidate : IDataErrorInfo
+#endif
+    {
 		bool CanValidate { get; set; }
 
 		bool IsValid { get; }
@@ -32,4 +40,5 @@ namespace Castle.Components.DictionaryAdapter
 
 		void AddValidator(IDictionaryValidator validator);
 	}
+
 }

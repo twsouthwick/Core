@@ -469,9 +469,13 @@ namespace Castle.Components.DictionaryAdapter
 
 		private void ObtainTypeConverter()
 		{
-			var converterType = AttributesUtil.GetTypeConverter(Property);
-
-			TypeConverter = (converterType != null)
+#if CORECLR
+            Type converterType = null; // TODO: let it fail down the null path for now.
+            // Fix once this builds.
+#else
+            var converterType = AttributesUtil.GetTypeConverter(Property);
+#endif
+            TypeConverter = (converterType != null)
 				? (TypeConverter) Activator.CreateInstance(converterType)
 				: TypeDescriptor.GetConverter(PropertyType);
 		}

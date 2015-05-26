@@ -23,16 +23,17 @@ namespace Castle.Core.Internal
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static class CollectionExtensions
 	{
-		public static TResult[] ConvertAll<T, TResult>(this T[] items, Converter<T, TResult> transformation)
+#if !CORECLR
+        public static TResult[] ConvertAll<T, TResult>(this T[] items, Converter<T, TResult> transformation)
 		{
-#if SILVERLIGHT || CORECLR
+#if SILVERLIGHT
 			return items.Select(transformation.Invoke).ToArray();
 #else
             return Array.ConvertAll(items, transformation);
 #endif
 		}
-
-		public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
+#endif
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
 		{
 			if (items == null) return;
 

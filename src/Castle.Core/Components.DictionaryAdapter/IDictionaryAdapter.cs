@@ -16,11 +16,17 @@ namespace Castle.Components.DictionaryAdapter
 {
 	using System;
 
-	/// <summary>
-	/// Contract for manipulating the Dictionary adapter.
-	/// </summary>
-	public interface IDictionaryAdapter : IDictionaryEdit, IDictionaryNotify, IDictionaryValidate, IDictionaryCreate
-	{
+    /// <summary>
+    /// Contract for manipulating the Dictionary adapter.
+    /// </summary>
+#if CORECLR
+    // todo:  Since IDictionaryValidate is gone (no IDataErrorInfo in Core) does this interface make sense still?
+    public interface IDictionaryAdapter : IDictionaryEdit, IDictionaryNotify, IDictionaryCreate
+#else
+    public interface IDictionaryAdapter : IDictionaryEdit, IDictionaryNotify, IDictionaryValidate, IDictionaryCreate
+#endif
+
+    {
 		DictionaryAdapterMeta Meta { get; }
 
 		DictionaryAdapterInstance This { get; }

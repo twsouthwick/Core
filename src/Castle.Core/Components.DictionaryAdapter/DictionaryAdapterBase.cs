@@ -138,7 +138,7 @@ namespace Castle.Components.DictionaryAdapter
 			return property == null ||
 				property.Setters.OfType<RemoveIfAttribute>().Where(remove => remove.ShouldRemove(value)).Any();
 		}
-
+#if !CORECLR
 		public override bool Equals(object obj)
 		{
 			var other = obj as IDictionaryAdapter;
@@ -166,7 +166,8 @@ namespace Castle.Components.DictionaryAdapter
 			return base.Equals(obj);
 		}
 
-		public override int GetHashCode()
+
+        public override int GetHashCode()
 		{
 			if (This.OldHashCode.HasValue)
 			{
@@ -183,8 +184,8 @@ namespace Castle.Components.DictionaryAdapter
 			This.OldHashCode = hashCode;
 			return hashCode;
 		}
-
-		protected void Initialize()
+#endif
+        protected void Initialize()
 		{
 			var metaBehaviors = Meta.Behaviors;
 			var initializers  = This.Initializers;

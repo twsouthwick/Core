@@ -231,29 +231,29 @@ namespace Castle.Components.DictionaryAdapter
 				CreateAdapterProperty(typeBuilder, property.Value);
 			}
 #if CORECLR
-            var implementation = typeBuilder.CreateTypeInfo();
+            var implementation = typeBuilder.CreateTypeInfo().AsType();
+            // TODO:  This is probably very, very wrong.  Debug when I can build
+            var creator = (Func<DictionaryAdapterInstance, IDictionaryAdapter>) implementation.GetTypeInfo().GetDeclaredMethod("__Create").CreateDelegate(implementation);
 #else
             var implementation = typeBuilder.CreateType();
-#endif
-
             var creator = (Func<DictionaryAdapterInstance, IDictionaryAdapter>)Delegate.CreateDelegate
 			(
-				typeof(Func<DictionaryAdapterInstance, IDictionaryAdapter>),
+				,
 				implementation,
 				"__Create"
 			);
-
-#if CORECLR
-            var meta = new DictionaryAdapterMeta(type, implementation.AsType(), typeBehaviors,
-#else
-            var meta = new DictionaryAdapterMeta(type, implementation, typeBehaviors,
 #endif
-            initializers.MetaInitializers.ToArray(), initializers.Initializers.ToArray(),
+            var meta = new DictionaryAdapterMeta(type, implementation, typeBehaviors,
+                initializers.MetaInitializers.ToArray(), initializers.Initializers.ToArray(),
 				propertyMap, this, creator);
-
-			const BindingFlags metaBindings = BindingFlags.Public | BindingFlags.Static | BindingFlags.SetField;
+#if CORECLR
+            // TODO: totally wrong, just fix later.
+            implementation.GetRuntimeMethod("__meta", new Type[0]).Invoke(meta, new object[0]);
+#else
+            const BindingFlags metaBindings = BindingFlags.Public | BindingFlags.Static | BindingFlags.SetField;
 			implementation.InvokeMember("__meta", metaBindings, null, null, new[] { meta });
-			return meta;
+#endif
+            return meta;
 		}
 
 		private static readonly PropertyInfo AdapterGetMeta = typeof(IDictionaryAdapter).GetProperty("Meta");
@@ -445,7 +445,9 @@ namespace Castle.Components.DictionaryAdapter
 
 		private static Dictionary<String, PropertyDescriptor> GetPropertyDescriptors(Type type, PropertyDescriptor initializers, out object[] typeBehaviors)
 		{
-			var propertyMap = new Dictionary<String, PropertyDescriptor>();
+
+#if !CORECLR
+            var propertyMap = new Dictionary<String, PropertyDescriptor>();
 			var interfaceBehaviors = typeBehaviors = ExpandBehaviors(AttributesUtil.GetInterfaceAttributes(type)).ToArray();
 			var defaultFetch = typeBehaviors.OfType<FetchAttribute>().Select(b => (bool?)b.Fetch).FirstOrDefault().GetValueOrDefault();
 
@@ -509,7 +511,11 @@ namespace Castle.Components.DictionaryAdapter
 			});
 
 			return propertyMap;
-		}
+#else
+            typeBehaviors = new object [0];
+            return null;
+#endif
+        }
 
 		private static IEnumerable<object> ExpandBehaviors(IEnumerable<object> behaviors)
 		{
@@ -550,7 +556,10 @@ namespace Castle.Components.DictionaryAdapter
 		private static readonly HashSet<Type> InfrastructureTypes =	new HashSet<Type>
 			{
 				typeof (IEditableObject), typeof (IDictionaryEdit), typeof (IChangeTracking),
-				typeof (IRevertibleChangeTracking), typeof (IDictionaryNotify),	typeof (IDataErrorInfo),
+				typeof (IRevertibleChangeTracking), typeof (IDictionaryNotify),
+#if !CORECLR
+                typeof (IDataErrorInfo),
+#endif
 				typeof (IDictionaryValidate), typeof (IDictionaryAdapter)
 			};
 

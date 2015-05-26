@@ -32,16 +32,24 @@ namespace Castle.DynamicProxy.Generators.Emitters.CodeBuilders
 		public void InvokeBaseConstructor()
 		{
 			var type = baseType;
-			if (type.ContainsGenericParameters)
-			{
-				type = type.GetGenericTypeDefinition();
+#if CORECLR
+            if (type.GetTypeInfo().ContainsGenericParameters)
+#else
+            if (type.ContainsGenericParameters)
+#endif
+            {
+                type = type.GetGenericTypeDefinition();
 					// need to get generic type definition, otherwise the GetConstructor method might throw NotSupportedException
 			}
 
-			var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-			var baseDefaultCtor = type.GetConstructor(flags, null, new Type[0], null);
-
-			InvokeBaseConstructor(baseDefaultCtor);
+			
+#if CORECLR
+            var baseDefaultCtor = type.GetConstructor(new Type[0]);
+#else
+            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var baseDefaultCtor = type.GetConstructor(flags, null, new Type[0], null);
+#endif
+            InvokeBaseConstructor(baseDefaultCtor);
 		}
 
 		public void InvokeBaseConstructor(ConstructorInfo constructor)

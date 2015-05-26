@@ -111,8 +111,12 @@ namespace Castle.DynamicProxy.Generators.Emitters
 		{
 			get
 			{
-				var attributes = builder.GetMethodImplementationFlags();
-				return (attributes & MethodImplAttributes.Runtime) != 0;
+#if CORECLR
+                var attributes = builder.MethodImplementationFlags;
+#else
+                var attributes = builder.GetMethodImplementationFlags();
+#endif
+                return (attributes & MethodImplAttributes.Runtime) != 0;
 			}
 		}
 
@@ -175,7 +179,7 @@ namespace Castle.DynamicProxy.Generators.Emitters
 		{
 			builder.SetSignature(
 				returnType,
-#if SILVERLIGHT
+#if SILVERLIGHT || CORECLR
 				null,
 				null,
 #else
@@ -183,8 +187,8 @@ namespace Castle.DynamicProxy.Generators.Emitters
 				returnParameter.GetOptionalCustomModifiers(),
 #endif
 				parameters,
-#if SILVERLIGHT
-				null,
+#if SILVERLIGHT || CORECLR
+                null,
 				null
 #else
 				baseMethodParameters.Select(x => x.GetRequiredCustomModifiers()).ToArray(),

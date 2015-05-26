@@ -51,11 +51,17 @@ namespace Castle.Components.DictionaryAdapter
 
 		public bool CanValidate
 		{
-			get { return adapter.CanValidate; }
+#if CORECLR
+            // TODO:  This stems from lack of IDataErrorInfo
+            get { return false; }
+            set {  }
+#else
+            get { return adapter.CanValidate; }
 			set { adapter.CanValidate = value; }
-		}
+#endif
+        }
 
-		public bool IsValid
+        public bool IsValid
 		{
 			get { return string.IsNullOrEmpty(Error); }
 		}
@@ -81,7 +87,8 @@ namespace Castle.Components.DictionaryAdapter
 				if (Array.IndexOf(propertyNames, columnName) >= 0)
 				{
 #if CORECLR
-                    return adapter[columnName];
+                    // TODO:  Test correctness once I can build.  Probably very wrong.
+                    return adapter.GetProperty(columnName, false).ToString();
 #else
                     return adapter[columnName];
 #endif
@@ -98,8 +105,14 @@ namespace Castle.Components.DictionaryAdapter
 
 		public IEnumerable<IDictionaryValidator> Validators
 		{
-			get { return adapter.Validators; }
-		}
+			get {
+#if CORECLR
+                return null;
+#else
+                return adapter.Validators;
+#endif
+            }
+        }
 
 		public void AddValidator(IDictionaryValidator validator)
 		{

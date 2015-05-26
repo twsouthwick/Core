@@ -139,6 +139,7 @@ namespace Castle.Core.Internal
 		{
 			return GetAttributes<T>(member).FirstOrDefault() != null;
 		}
-	}
 #endif
     }
+
+}

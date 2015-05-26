@@ -47,11 +47,18 @@ namespace Castle.DynamicProxy.Generators.Emitters
 			}
 			else
 			{
-				var newDefinedProperty = (DefineProperty_Clr_2_0_SP1)
+#if CORECLR
+                // TODO: verify correctness w/ Debugger
+                var newDefinedProperty = (DefineProperty_Clr_2_0_SP1)
+                                         TypeBuilderMethods.DefineProperty.CreateDelegate(typeof(DefineProperty_Clr_2_0_SP1),
+                                                                 parentTypeEmitter.TypeBuilder);
+#else
+                var newDefinedProperty = (DefineProperty_Clr_2_0_SP1)
 				                         Delegate.CreateDelegate(typeof(DefineProperty_Clr_2_0_SP1),
 				                                                 parentTypeEmitter.TypeBuilder,
 				                                                 TypeBuilderMethods.DefineProperty);
-				builder = newDefinedProperty(
+#endif
+                builder = newDefinedProperty(
 					name, attributes, CallingConventions.HasThis, propertyType,
 					null, null, arguments, null, null);
 			}
