@@ -239,7 +239,7 @@ namespace Castle.Components.DictionaryAdapter
             var implementation = typeBuilder.CreateType();
             var creator = (Func<DictionaryAdapterInstance, IDictionaryAdapter>)Delegate.CreateDelegate
 			(
-				,
+                typeof(Func<DictionaryAdapterInstance, IDictionaryAdapter>),
 				implementation,
 				"__Create"
 			);

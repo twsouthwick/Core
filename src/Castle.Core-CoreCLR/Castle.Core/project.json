@@ -1,77 +1,105 @@
 {
-    "version": "3.3.4-*",
-    "description": "Castle Project Core, including DynamicProxy, Logging Abstractions and DictionaryAdapter",
-    "authors": [ "Castle Project Contributors" ],
-    "tags": [ "castle", "dynamicproxy", "dynamic proxy", "dynamicproxy2", "dictionaryadapter", "emailsender" ],
-    "projectUrl": "http://www.castleproject.org/",
-    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+  "version": "3.3.4-*",
+  "description": "Castle Project Core, including DynamicProxy, Logging Abstractions and DictionaryAdapter",
+  "authors": [ "Castle Project Contributors" ],
+  "tags": [ "castle", "dynamicproxy", "dynamic proxy", "dynamicproxy2", "dictionaryadapter", "emailsender" ],
+  "projectUrl": "http://www.castleproject.org/",
+  "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
 
-    
 
-    "compile": [
-        "../../Castle.Core/Components.DictionaryAdapter/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Attributes/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Util/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Xml/Core/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Accessors/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Collections/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Cursors/Base/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Cursors/SystemXml/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Cursors/XPath/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Namespaces/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Serializers/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Types/*.cs",
-        "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Utilities/*.cs",
-        "../../Castle.Core/Core/*.cs",
-        "../../Castle.Core/Core/Configuration/*.cs",
-        "../../Castle.Core/Core/Extensions/*.cs",
-        "../../Castle.Core/Core/Internal/*.cs",
-        "../../Castle.Core/Core/Logging/*.cs",
-        "../../Castle.Core/Core/Resource/*.cs",
-        "../../Castle.Core/Core/Smtp/*.cs",
-        "../../Castle.Core/DynamicProxy/*.cs",
-        "../../Castle.Core/DynamicProxy/Contributors/*.cs",
-        "../../Castle.Core/DynamicProxy/Generators/*.cs",
-        "../../Castle.Core/DynamicProxy/Generators/Emitters/*.cs",
-        "../../Castle.Core/DynamicProxy/Generators/Emitters/SimpleAST/*.cs",
-        "../../Castle.Core/DynamicProxy/Generators/Emitters/CodeBuilders/*.cs",
-        "../../Castle.Core/DynamicProxy/Internal/*.cs",
-        "../../Castle.Core/DynamicProxy/Serialization/*.cs",
-        "../../Castle.Core/DynamicProxy/Tokens/*.cs",
-        "../../Castle.Core/Properties/InternalsVisibleToTests.cs"
-    ],
 
-    "dependencies": {
+  "compile": [
+    "../../Castle.Core/Components.DictionaryAdapter/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Attributes/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Util/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Core/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Accessors/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Collections/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Cursors/Base/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Cursors/SystemXml/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Cursors/XPath/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Namespaces/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Serializers/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Types/*.cs",
+    "../../Castle.Core/Components.DictionaryAdapter/Xml/Internal/Utilities/*.cs",
+    "../../Castle.Core/Core/*.cs",
+    "../../Castle.Core/Core/Configuration/*.cs",
+    "../../Castle.Core/Core/Extensions/*.cs",
+    "../../Castle.Core/Core/Internal/*.cs",
+    "../../Castle.Core/Core/Logging/*.cs",
+    "../../Castle.Core/Core/Resource/*.cs",
+    "../../Castle.Core/Core/Smtp/*.cs",
+    "../../Castle.Core/DynamicProxy/*.cs",
+    "../../Castle.Core/DynamicProxy/Contributors/*.cs",
+    "../../Castle.Core/DynamicProxy/Generators/*.cs",
+    "../../Castle.Core/DynamicProxy/Generators/Emitters/*.cs",
+    "../../Castle.Core/DynamicProxy/Generators/Emitters/SimpleAST/*.cs",
+    "../../Castle.Core/DynamicProxy/Generators/Emitters/CodeBuilders/*.cs",
+    "../../Castle.Core/DynamicProxy/Internal/*.cs",
+    "../../Castle.Core/DynamicProxy/Serialization/*.cs",
+    "../../Castle.Core/DynamicProxy/Tokens/*.cs",
+    "../../Castle.Core/Properties/InternalsVisibleToTests.cs"
+  ],
+
+
+  "frameworks": {
+    "dnxcore50": {
+      "compilationOptions": { "define": [ "CORECLR" ] },
+
+      "dependencies": {
+        "System.Xml.XPath": "4.0.0-beta-22717",
+        "System.Collections": "4.0.10-beta-22816",
+        "System.Linq": "4.0.0-beta-22816",
+        "System.Threading": "4.0.10-beta-22816",
+        "Microsoft.CSharp": "4.0.0-beta-22816",
+        "System.ComponentModel.TypeConverter": "4.0.0-beta-22906",
+        "System.Diagnostics.Debug": "4.0.10-beta-22906",
+        "System.Reflection.TypeExtensions": "4.0.0-beta-22906",
+        "System.Reflection.Extensions": "4.0.0-beta-22906",
+        "System.Runtime.Extensions": "4.0.10-beta-22906",
+        "System.Reflection.Emit": "4.0.0-beta-22906",
+        "System.Resources.ResourceManager": "4.0.0-beta-22906",
+        "System.IO.FileSystem": "4.0.0-beta-22906",
+        "System.Collections.Specialized": "4.0.0-beta-22906",
+        "System.Xml.XmlDocument": "4.0.0-beta-22816",
         "System.Threading.Thread": "4.0.0-beta-22906",
         "System.Console": "4.0.0-beta-22906",
         "System.Diagnostics.TraceSource": "4.0.0-beta-22906",
         "System.AppContext": "4.0.0-beta-22816",
         "System.Xml.XmlSerializer": "4.0.10-beta-22816",
         "System.Reflection.Primitives": "4.0.0-beta-22906"
-
+      }
+    },
+    "net35": {
+      "bin": {
+        "assembly": "../../../build/NET35/NET35-Release/bin/Castle.Core.dll",
+        "pdb": "../../../build/NET35/NET35-Release/bin/Castle.Core.pdb"
+      }
+    },
+    "net40-client": {
+      "bin": {
+        "assembly": "../../../build/NET40/NET40-Release/pkg/bin/Castle.Core.dll",
+        "pdb": "../../../build/NET40/NET40-Release/pkg/bin/Castle.Core.pdb"
+      }
+    },
+    "net45": {
+      "bin": {
+        "assembly": "../../../build/NET45/NET45-Release/bin/Castle.Core.dll",
+        "pdb": "../../../build/NET45/NET45-Release/bin/Castle.Core.pdb"
+      }
+    },
+    "sl4": {
+      "bin": {
+        "assembly": "../../../build/SL40/SL40-Release/bin/Castle.Core.dll",
+        "pdb": "../../../build/SL40/SL40-Release/bin/Castle.Core.pdb"
+      }
+    },
+    "sl5": {
+      "bin": {
+        "assembly": "../../../build/SL50/SL50-Release/bin/Castle.Core.dll",
+        "pdb": "../../../build/SL50/SL50-Release/bin/Castle.Core.pdb"
+      }
     },
 
-    "frameworks": {
-        "dnxcore50": {
-            "compilationOptions": { "define": [ "CORECLR" ] },
-
-            "dependencies": {
-                "System.Xml.XPath": "4.0.0-beta-22717",
-                "System.Collections": "4.0.10-beta-22816",
-                "System.Linq": "4.0.0-beta-22816",
-                "System.Threading": "4.0.10-beta-22816",
-                "Microsoft.CSharp": "4.0.0-beta-22816",
-                "System.ComponentModel.TypeConverter": "4.0.0-beta-22906",
-                "System.Diagnostics.Debug": "4.0.10-beta-22906",
-                "System.Reflection.TypeExtensions": "4.0.0-beta-22906",
-                "System.Reflection.Extensions": "4.0.0-beta-22906",
-                "System.Runtime.Extensions": "4.0.10-beta-22906",
-                "System.Reflection.Emit": "4.0.0-beta-22906",
-                "System.Resources.ResourceManager": "4.0.0-beta-22906",
-                "System.IO.FileSystem": "4.0.0-beta-22906",
-                "System.Collections.Specialized": "4.0.0-beta-22906",
-                "System.Xml.XmlDocument": "4.0.0-beta-22816"
-            }
-        }
-    }
+  }
 }

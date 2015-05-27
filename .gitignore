@@ -15,3 +15,5 @@ _ReSharper*
 
 *.orig
 *~
+src/Castle.Core-CoreCLR/artifacts/
+src/Castle.Core-CoreCLR/artifacts/

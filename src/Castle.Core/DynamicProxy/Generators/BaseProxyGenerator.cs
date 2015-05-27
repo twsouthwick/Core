@@ -19,10 +19,12 @@ namespace Castle.DynamicProxy.Generators
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Reflection;
-    using System.Xml.Serialization;
+
 #if !SILVERLIGHT && !CORECLR
 	using System.Runtime.Serialization;
-	using System.Xml.Serialization;
+#endif
+#if !SILVERLIGHT
+    using System.Xml.Serialization;
 #endif
 
     using Castle.Core.Internal;
