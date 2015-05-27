@@ -53,7 +53,7 @@ namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 #if CORECLR
                 if (reference.Type.GetTypeInfo().IsValueType)
                 {
-                    gen.Emit(OpCodes.Box, reference.Type); // TODO: Core doesn't define UnderlyingSystemType. This is likely very wrong, fix using debugger when it builds.
+                    gen.Emit(OpCodes.Box, reference.Type); 
                 }
 #else
                 if (reference.Type.IsValueType)

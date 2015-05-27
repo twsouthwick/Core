@@ -51,7 +51,7 @@ namespace Castle.DynamicProxy.Contributors
 				var item = new InterfaceMembersOnClassCollector(@interface,
 				                                                true,
 #if CORECLR
-                                                                targetType.GetTypeInfo().GetRuntimeInterfaceMap(@interface)) { Logger = Logger }; // TODO: Verify correctness
+                                                                targetType.GetTypeInfo().GetRuntimeInterfaceMap(@interface)) { Logger = Logger }; // TODO: Validate correctness w/ Debugger.
 #else
                                                                 targetType.GetInterfaceMap(@interface)) { Logger = Logger };
 #endif

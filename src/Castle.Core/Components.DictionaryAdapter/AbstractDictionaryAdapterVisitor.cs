@@ -71,7 +71,7 @@ namespace Castle.Components.DictionaryAdapter
 						VisitCollection(dictionaryAdapter, property, collectionItemType, state);
 					}
 #if CORECLR
-                    else if (property.PropertyType.DeclaringType.GetTypeInfo().IsInterface) // TODO: Correctness check
+                    else if (property.PropertyType.GetTypeInfo().IsInterface) 
 #else
                     else if (property.PropertyType.IsInterface)
 #endif

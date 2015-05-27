@@ -78,8 +78,8 @@
     },
     "net40-client": {
       "bin": {
-        "assembly": "../../../build/NET40/NET40-Release/pkg/bin/Castle.Core.dll",
-        "pdb": "../../../build/NET40/NET40-Release/pkg/bin/Castle.Core.pdb"
+        "assembly": "../../../build/NET40/NET40-Release/bin/Castle.Core.dll",
+        "pdb": "../../../build/NET40/NET40-Release/bin/Castle.Core.pdb"
       }
     },
     "net45": {
@@ -99,7 +99,6 @@
         "assembly": "../../../build/SL50/SL50-Release/bin/Castle.Core.dll",
         "pdb": "../../../build/SL50/SL50-Release/bin/Castle.Core.pdb"
       }
-    },
-
+    }
   }
 }

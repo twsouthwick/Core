@@ -49,13 +49,16 @@ namespace Castle.DynamicProxy.Contributors
 
             foreach (var @interface in interfaces)
             {
-#if !CORECLR // TODO:  Reflection investigation.
                 var item = new InterfaceMembersOnClassCollector(@interface,
                                                                 true,
+#if CORECLR 
+                                                                targetType.GetTypeInfo().GetRuntimeInterfaceMap(@interface))  { Logger = Logger };
+#else
                                                                 targetType.GetInterfaceMap(@interface)) { Logger = Logger };
+#endif
                 item.CollectMembersToProxy(hook);
                 yield return item;
-#endif
+
             }
         }
 

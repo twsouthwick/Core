@@ -124,7 +124,8 @@ namespace Castle.Core.Internal
 			{
 				var attributeType  = attribute.GetType();
 #if CORECLR
-                var attributeUsage = attributeType.GetTypeInfo().GetCustomAttribute<AttributeUsageAttribute>(); // TODO: Correctness after build
+                // TODO: Validate correctness w/ Debugger.
+                var attributeUsage = attributeType.GetTypeInfo().GetCustomAttribute<AttributeUsageAttribute>(); 
 #else
                 var attributeUsage = attributeType.GetAttributeUsage();
 #endif

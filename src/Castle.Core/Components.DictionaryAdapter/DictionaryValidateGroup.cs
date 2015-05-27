@@ -87,7 +87,7 @@ namespace Castle.Components.DictionaryAdapter
 				if (Array.IndexOf(propertyNames, columnName) >= 0)
 				{
 #if CORECLR
-                    // TODO:  Test correctness once I can build.  Probably very wrong.
+                    // TODO: Validate correctness w/ Debugger.
                     return adapter.GetProperty(columnName, false).ToString();
 #else
                     return adapter[columnName];
