@@ -17,5 +17,5 @@ _ReSharper*
 *~
 artifacts
 *.lock.json
-src/Castle.Core-CoreCLR/artifacts/bin/*
+packages
 .vs
