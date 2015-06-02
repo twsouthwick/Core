@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Castle.Core", "Castle.Core\Castle.Core.xproj", "{5910D3F5-93C4-437E-BE83-36DEDFAF03E6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20D0C329-01D5-4E84-B745-47EEED199EC6}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Castle.Core.Tests_CoreCLR", "Castle.Core.Tests-CoreCLR\Castle.Core.Tests_CoreCLR.xproj", "{F8F2BFD7-1AC1-4E32-AE30-A9A82974DC54}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0A125366-3EAA-468A-BB04-4BEFF8525F73}"
 	ProjectSection(SolutionItems) = preProject
 		NuGet.config = NuGet.config
 	EndProjectSection
@@ -20,6 +23,10 @@ Global
 		{5910D3F5-93C4-437E-BE83-36DEDFAF03E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5910D3F5-93C4-437E-BE83-36DEDFAF03E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5910D3F5-93C4-437E-BE83-36DEDFAF03E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8F2BFD7-1AC1-4E32-AE30-A9A82974DC54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8F2BFD7-1AC1-4E32-AE30-A9A82974DC54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8F2BFD7-1AC1-4E32-AE30-A9A82974DC54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8F2BFD7-1AC1-4E32-AE30-A9A82974DC54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
